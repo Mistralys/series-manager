@@ -1,0 +1,28 @@
+{
+    "name": "aeonoftime\/series-manager",
+    "description": "Series Manager for tracking TV series watching.",
+    "license": "proprietary",
+    "type": "project",
+    "homepage": "https:\/\/aeonoftime.com\/Series",
+    "authors": [
+        {
+            "name": "Sebastian Mordziol",
+            "email": "s.mordziol@mistralys.eu",
+            "role": "Project Lead, Developer"
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "assets\/classes\/"
+        ],
+        "files": [
+        	"assets\/functions.php"
+        ]
+    },
+    "require": {
+        "mistralys\/application-utils": "^1.2.5",
+        "mistralys\/application-localization": "^1.2"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
