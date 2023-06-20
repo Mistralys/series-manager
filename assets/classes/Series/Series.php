@@ -21,7 +21,7 @@ class Series_Series
     public function getName()
     {
         $name = $this->getKey('name');
-        if(substr($name, 0, 3) == 'The') {
+        if(strpos($name, 'The') === 0) {
             $name = substr($name, 4).', The';
         }
         
@@ -31,11 +31,7 @@ class Series_Series
     public function getStatus()
     {
         $info = $this->getKey('info');
-        if(isset($info['status'])) {
-            return $info['status'];
-        }
-        
-        return null;
+        return $info['status'] ?? null;
     }
     
     public function getTvcomID()
@@ -58,22 +54,22 @@ class Series_Series
         return $this->getKey('tvdb');
     }
     
-    public function getTvdbLink()
+    public function getTvdbLink() : ?string
     {
         $id = $this->getTvdbID();
         if($id) {
-            return 'http://thetvdb.com/index.php?tab=series&id='.$id.'&lid=7';
+            return 'https://thetvdb.com/index.php?id='.$id.'&lid=7#seasons';
         }
         
         return null;
     }
     
-    public function getRarbgID()
+    public function getRarbgID() : string
     {
-        return $this->getKey('rarbg');
+        return (string)$this->getKey('rarbg');
     }
     
-    public function getRarbgLink()
+    public function getRarbgLink() : ?string
     {
         $id = $this->getRarbgID();
         if($id) {
@@ -92,7 +88,7 @@ class Series_Series
     {
         $id = $this->getRarbgID();
         if($id) {
-            return 'http://imdb.com/title/'.$id;
+            return 'https://imdb.com/title/'.$id;
         }
         
         return null;
