@@ -5,16 +5,25 @@ declare(strict_types=1);
 namespace Mistralys\SeriesManager\Series;
 
 use AppUtils\ArrayDataCollection;
+use AppUtils\FileHelper\JSONFile;
+use Mistralys\SeriesManager\Manager;
 
 class Episode
 {
     private int $number;
     private ArrayDataCollection $data;
+    private Season $season;
 
-    public function __construct(int $number, array $data)
+    public function __construct(Season $season, int $number, array $data)
     {
         $this->number = $number;
+        $this->season = $season;
         $this->data = ArrayDataCollection::create($data);
+    }
+
+    public function getSeason() : Season
+    {
+        return $this->season;
     }
 
     public function getNumber() : int
@@ -35,5 +44,23 @@ class Episode
     public function getSynopsis() : string
     {
         return $this->data->getString(Series::INFO_EPISODE_OVERVIEW);
+    }
+
+    /**
+     * @return array<int,array{label:string,url:string}>
+     */
+    public function getSearchLinks() : array
+    {
+        return Manager::getInstance()->prepareCustomLinks($this->getSearchString());
+    }
+
+    public function getSearchString() : string
+    {
+        return sprintf(
+            '%s s%02de%02d',
+            $this->getSeason()->getSeries()->getName(),
+            $this->getSeason()->getNumber(),
+            $this->getNumber()
+        );
     }
 }
