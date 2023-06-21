@@ -7,3 +7,4 @@ composer.phar
 config-local.php
 data/series.json
 *.json
+.phpunit.result.cache
