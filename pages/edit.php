@@ -97,6 +97,19 @@ foreach($seasons as $season)
 
             ?>
             <tr>
+                <td style="text-align: center">
+                    <?php
+                    if($episode->isDownloaded()) {
+                        ?>
+                        <i class="glyphicon glyphicon-ok-sign text-success"></i>
+                        <?php
+                    } else {
+                        ?>
+                        <i class="glyphicon glyphicon-remove-sign text-danger"></i>
+                        <?php
+                    }
+                    ?>
+                </td>
                 <td style="text-align: right"><?php echo sprintf('%02d', $episode->getNumber()) ?></td>
                 <td><?php echo $episode->getSynopsis() ?></td>
                 <td style="white-space: nowrap"><?php echo implode(' | ', $links) ?></td>
