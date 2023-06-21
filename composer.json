@@ -1,7 +1,7 @@
 {
-    "name": "aeonoftime\/series-manager",
+    "name": "mistralys/series-manager",
     "description": "Series Manager for tracking TV series watching.",
-    "license": "proprietary",
+    "license": "MIT",
     "type": "project",
     "homepage": "https:\/\/aeonoftime.com\/Series",
     "authors": [
@@ -14,14 +14,19 @@
     "autoload": {
         "classmap": [
             "assets\/classes\/"
-        ],
-        "files": [
-        	"assets\/functions.php"
         ]
     },
     "require": {
-        "mistralys\/application-utils": "^1.2.5",
-        "mistralys\/application-localization": "^1.2"
+        "mistralys\/application-utils": "^2.3.2",
+        "mistralys\/application-localization": "^1.4.1",
+        "mistralys/html_quickform2": ">=2.1.8",
+        "adrenth/thetvdb2": ">=6.1.0",
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
