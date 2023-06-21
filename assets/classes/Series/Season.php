@@ -15,11 +15,18 @@ class Season
      * @var Episode[]|null
      */
     private ?array $episodes = null;
+    private Series $series;
 
-    public function __construct(int $number, array $data)
+    public function __construct(Series $series, int $number, array $data)
     {
         $this->number = $number;
+        $this->series = $series;
         $this->data = ArrayDataCollection::create($data);
+    }
+
+    public function getSeries() : Series
+    {
+        return $this->series;
     }
 
     public function getNumber() : int
@@ -47,7 +54,7 @@ class Season
 
         foreach($data as $episodeNumber => $episodeData)
         {
-            $this->episodes[] = new Episode($episodeNumber, $episodeData);
+            $this->episodes[] = new Episode($this, $episodeNumber, $episodeData);
         }
 
         return $this->episodes;
