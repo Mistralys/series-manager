@@ -97,9 +97,9 @@ foreach($seasons as $season)
 
             ?>
             <tr>
-                <td><?php echo $episode->getNumber() ?></td>
+                <td style="text-align: right"><?php echo sprintf('%02d', $episode->getNumber()) ?></td>
                 <td><?php echo $episode->getSynopsis() ?></td>
-                <td><?php echo implode(' | ', $links) ?></td>
+                <td style="white-space: nowrap"><?php echo implode(' | ', $links) ?></td>
             </tr>
             <?php
         }

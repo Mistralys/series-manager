@@ -43,8 +43,8 @@ $html .=
             '<tr>'.
                 '<td>Name</td>'.
                 '<td>Status</td>'.
-                '<td>Seasons</td>'.
-                '<td>Episodes</td>'.
+                '<td style="text-align: right">Seasons</td>'.
+                '<td style="text-align: right">Episodes</td>'.
                 '<td>Links</td>'.
                 '<td>Last Downloaded</td>'.
                 '<td></td>'.
@@ -56,8 +56,8 @@ $html .=
                 '<tr>'.
                     '<td><a href="?id='.$item->getIMDBID().'">'.$item->getName().'</a></td>'.
                     '<td>'.$item->getStatus().'</td>'.
-                    '<td>'.$item->countSeasons().'</td>'.
-                    '<td>'.$item->countEpisodes().'</td>'.
+                    '<td style="text-align: right">'.$item->countSeasons().'</td>'.
+                    '<td style="text-align: right">'.$item->countEpisodes().'</td>'.
                     '<td>';
                         $links = $item->getLinks();
                         $tokens = array();
@@ -88,10 +88,10 @@ $html .=
                         '</div>'.
                     '</td>'.
                     '<td>'.
-                        '<a href="?page=edit&id='.$item->getIMDBID().'" class="btn btn-default">'.
+                        '<a href="'.$item->getURLEdit().'" class="btn btn-default">'.
                             '<i class="glyphicon glyphicon-edit"></i> '.
                         '</a> '.
-                        '<a href="?page=delete&id='.$item->getIMDBID().'" class="btn btn-danger">'.
+                        '<a href="'.$item->getURLDelete().'" class="btn btn-danger">'.
                             '<i class="glyphicon glyphicon-remove-sign"></i> '.
                         '</a>'.
                     '</td>'.
