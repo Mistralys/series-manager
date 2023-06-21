@@ -63,24 +63,24 @@ class SeriesForm
         }
 
         $name = $this->cleanRequestVar(self::SETTING_NAME);
-        $tvcom = $this->cleanRequestVar(self::SETTING_TVDB_ALIAS);
-        $rarbg = $this->cleanRequestVar(self::SETTING_IMDB_ID);
-        $tvdb = $this->cleanRequestVar(self::SETTING_TVDB_ID);
+        $alias = $this->cleanRequestVar(self::SETTING_TVDB_ALIAS);
+        $imdbID = $this->cleanRequestVar(self::SETTING_IMDB_ID);
+        $tvdbID = $this->cleanRequestVar(self::SETTING_TVDB_ID);
 
         if (isset($this->series))
         {
             $this->series->setName($name);
-            $this->series->setTVDBAlias($tvcom);
-            $this->series->setIMDBID($rarbg);
-            $this->series->setTVDBID($tvdb);
+            $this->series->setTVDBAlias($alias);
+            $this->series->setIMDBID($imdbID);
+            $this->series->setTVDBID($tvdbID);
         }
         else
         {
             $this->collection->add(array(
                 Series::KEY_NAME => $name,
-                Series::KEY_TVDB_ALIAS => $tvcom,
-                Series::KEY_IMDB_ID => $rarbg,
-                Series::KEY_TVDB_ID => $tvdb
+                Series::KEY_TVDB_ALIAS => $alias,
+                Series::KEY_IMDB_ID => $imdbID,
+                Series::KEY_TVDB_ID => $tvdbID
             ));
         }
 
