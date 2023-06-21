@@ -16,6 +16,12 @@
             "assets\/classes\/"
         ]
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Mistralys/thetvdb2.git"
+        }
+    ],
     "require": {
         "mistralys\/application-utils": "^2.3.2",
         "mistralys\/application-localization": "^1.4.1",

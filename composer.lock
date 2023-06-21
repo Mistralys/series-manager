@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9057b0e359b752a815c5f0f5f5c109dc",
+    "content-hash": "aeaf31e4efa35dd28f8349897b420812",
     "packages": [
         {
             "name": "adrenth/thetvdb2",
-            "version": "6.1.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/adrenth/thetvdb2.git",
-                "reference": "00279452acaa6243394a9e18ae239f44c4f7769d"
+                "url": "https://github.com/Mistralys/thetvdb2.git",
+                "reference": "bc0985c0af7deb77d38c2589d14ebbe4e8c12c96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/adrenth/thetvdb2/zipball/00279452acaa6243394a9e18ae239f44c4f7769d",
-                "reference": "00279452acaa6243394a9e18ae239f44c4f7769d",
+                "url": "https://api.github.com/repos/Mistralys/thetvdb2/zipball/bc0985c0af7deb77d38c2589d14ebbe4e8c12c96",
+                "reference": "bc0985c0af7deb77d38c2589d14ebbe4e8c12c96",
                 "shasum": ""
             },
             "require": {
@@ -30,13 +30,13 @@
             "require-dev": {
                 "phpstan/phpstan": "^1.4"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Adrenth\\Thetvdb\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -55,10 +55,9 @@
                 "thetvdb.com"
             ],
             "support": {
-                "issues": "https://github.com/adrenth/thetvdb2/issues",
-                "source": "https://github.com/adrenth/thetvdb2/tree/6.1.0"
+                "source": "https://github.com/Mistralys/thetvdb2/tree/develop"
             },
-            "time": "2022-12-06T13:23:38+00:00"
+            "time": "2023-06-21T06:05:48+00:00"
         },
         {
             "name": "doctrine/inflector",
