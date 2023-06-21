@@ -6,3 +6,4 @@ composer.phar
 # composer.lock
 config-local.php
 data/series.json
+*.json
