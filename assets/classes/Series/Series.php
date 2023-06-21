@@ -1,26 +1,50 @@
 <?php
 
-class Series_Series
+declare(strict_types=1);
+
+namespace Mistralys\SeriesManager\Series;
+
+use Adrenth\Thetvdb\Client;
+use Adrenth\Thetvdb\Model\BasicEpisode;
+use AppUtils\FileHelper\JSONFile;
+
+class Series
 {
-    protected $data;
+    public const KEY_TVDB_ALIAS = 'tvcom';
+    public const KEY_TVDB_ID = 'tvdb';
+    public const KEY_IMDB_ID = 'rarbg';
+    public const KEY_NAME = 'name';
+    public const INFO_STATUS = 'status';
+    public const INFO_GENRE = 'genre';
+    public const INFO_NETWORK = 'network';
+    public const INFO_OVERVIEW = 'overview';
+    public const INFO_SEASON = 'season';
+    public const INFO_FIRST_AIRED = 'firstAired';
+    public const INFO_SITE_RATING = 'siteRating';
+    public const INFO_SITE_RATING_COUNT = 'siteRatingCount';
+    public const KEY_INFO = 'stored-info';
+    public const INFO_SEASONS = 'seasons';
+    public const INFO_SEASON_ID = 'id';
+    public const INFO_SEASON_EPISODES = 'episodes';
+    public const INFO_EPISODE_ID = 'id';
+    public const INFO_EPISODE_NAME = 'name';
+    public const INFO_EPISODE_OVERVIEW = 'overview';
+
+    protected array $data;
     
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
     
-    protected function getKey($name, $default=null)
+    protected function getKey(string $name, $default=null)
     {
-        if(isset($this->data[$name])) {
-            return $this->data[$name];
-        }
-        
-        return $default;
+        return $this->data[$name] ?? $default;
     }
     
-    public function getName()
+    public function getName() : string
     {
-        $name = $this->getKey('name');
+        $name = (string)$this->getKey(self::KEY_NAME);
         if(strpos($name, 'The') === 0) {
             $name = substr($name, 4).', The';
         }
@@ -28,65 +52,49 @@ class Series_Series
         return $name;
     }
     
-    public function getStatus()
+    public function getStatus() : string
     {
-        $info = $this->getKey('info');
-        return $info['status'] ?? null;
+        return (string)$this->getInfo(self::INFO_STATUS);
     }
     
-    public function getTvcomID()
+    public function getTVDBAlias() : string
     {
-        return $this->getKey('tvcom');
+        return (string)$this->getKey(self::KEY_TVDB_ALIAS);
     }
     
-    public function getTvcomLink()
+    public function getTVDBID()
     {
-        $id = $this->getTvcomID();
+        return $this->getKey(self::KEY_TVDB_ID);
+    }
+    
+    public function getTVDBLink() : ?string
+    {
+        $id = $this->getTVDBAlias();
         if($id) {
-            return 'http://tv.com/shows/'.$id.'/episodes/';
+            return 'https://thetvdb.com/series/'.$id.'#seasons';
         }
         
         return null;
     }
     
-    public function getTvdbID()
+    public function getIMDBID() : string
     {
-        return $this->getKey('tvdb');
-    }
-    
-    public function getTvdbLink() : ?string
-    {
-        $id = $this->getTvdbID();
-        if($id) {
-            return 'https://thetvdb.com/index.php?id='.$id.'&lid=7#seasons';
-        }
-        
-        return null;
-    }
-    
-    public function getRarbgID() : string
-    {
-        return (string)$this->getKey('rarbg');
+        return (string)$this->getKey(self::KEY_IMDB_ID);
     }
     
     public function getRarbgLink() : ?string
     {
-        $id = $this->getRarbgID();
-        if($id) {
-            return 'https://rarbg.to/tv/'.$id.'/';
+        $name = $this->getName();
+        if($name) {
+            return 'https://rargb.to/search/?'.http_build_query(array('search' => $name));
         }
         
         return null;
     }
     
-    public function getIMDBID()
+    public function getIMDBLink() : ?string
     {
-        return $this->getRarbgID();
-    }
-    
-    public function getIMDBLink()
-    {
-        $id = $this->getRarbgID();
+        $id = $this->getIMDBID();
         if($id) {
             return 'https://imdb.com/title/'.$id;
         }
@@ -113,15 +121,15 @@ class Series_Series
         return $this->setKey('lastDLSeason', $season);
     }
 
-    protected function setKey($name, $value)
+    protected function setKey(string $name, $value) : bool
     {
         $new = $value;
         $old = $this->getKey($name);
         
-        if($new==null) {$new='';}
-        if($old==null) {$old='';}
+        if($new===null) {$new='';}
+        if($old===null) {$old='';}
         
-        if($new==$old) {
+        if($new===$old) {
             return false;
         }
         
@@ -138,84 +146,117 @@ class Series_Series
         return $this->setKey('lastDLEpisode', $episode);
     }
     
-    public function toArray()
+    public function toArray() : array
     {
         return $this->data;
     }
     
-    public function fetchData($clearCache=false)
+    public function fetchData(Client $client, bool $clearCache=false) : void
     {
-        $tvdbID = $this->getTvdbID();
-        if(empty($tvdbID)) {
+        $id = $this->getTVDBID();
+        if(empty($id)) {
             $this->addMessage('Cannot fetch data, no TVDB ID set.');
             return;
         }
-        
-        $cacheFile = APP_ROOT.'/cache/'.$this->getRarbgID().'.info.xml';
-        if($clearCache && file_exists($cacheFile)) {
-            unlink($cacheFile);
-        }
-        
-        if(!file_exists($cacheFile)) {
-            $url = 'http://thetvdb.com/api/'.APP_TVDB_API_KEY.'/series/'.$this->getTvdbID().'/all/en.xml';
-            $content = @file_get_contents($url);
-            if(!$content) {
-                $this->addMessage('Failed to retrieve XML from API. Wrong ID?');
-                return;
-            }
-            
-            file_put_contents($cacheFile, $content);
-            
-            $this->addMessage('Fetched info from online API.');
-        } else {
-            $content = file_get_contents($cacheFile);
-            $this->addMessage('Fetched info from local cache.');
+
+        $this->resetInternalCache();
+
+        $cacheFile = JSONFile::factory(APP_ROOT.'/cache/'.$this->getIMDBID().'-info.json');
+        if($clearCache) {
+            $cacheFile->delete();
         }
 
-        try
-        {
-            $xml = new SimpleXMLElement($content);
-        } 
-        catch(Exception $e) 
-        {
-            $this->addMessage('Could not read the XML response.');
+        if($cacheFile->exists()) {
+            $this->addMessage('Fetched info from local cache.');
+            $this->setKey(self::KEY_INFO, $cacheFile->parse());
             return;
         }
-        
+
+        $fetched = $client->series()->get((int)$id);
+
+        $this->addMessage('Fetched info from online API.');
+
         $info = array(
-            'genres' => explode('|', trim((string)$xml->Series->Genre, '|')),
-            'status' => (string)$xml->Series->Status,
-            'seasons' => array()
+            self::INFO_STATUS => $fetched->getStatus(),
+            self::INFO_GENRE => $fetched->getGenre(),
+            self::INFO_NETWORK => $fetched->getNetwork(),
+            self::INFO_OVERVIEW => $fetched->getOverview(),
+            self::INFO_SEASON => $fetched->getSeason(),
+            self::INFO_FIRST_AIRED => $fetched->getFirstAired(),
+            self::INFO_SITE_RATING => $fetched->getSiteRating(),
+            self::INFO_SITE_RATING_COUNT => $fetched->getSiteRatingCount(),
+            self::INFO_SEASONS => array()
         );
-        
-        foreach($xml->Episode as $episode) {
-            $season = (string)$episode->SeasonNumber;
-            if(!isset($info['seasons'][$season])) {
-                $info['seasons'][$season] = array();
+
+        $episodes = $client->series()->getEpisodes((int)$id)->getData();
+
+        foreach($episodes as $episode)
+        {
+            /* @var BasicEpisode $episode */
+            $season = $episode->getAiredSeason();
+
+            if(!isset($info[self::INFO_SEASONS][$season]))
+            {
+                $info[self::INFO_SEASONS][$season] = array(
+                    self::INFO_SEASON_ID => $episode->getAiredSeasonID(),
+                    self::INFO_SEASON_EPISODES => array()
+                );
             }
-            
-            $episodeNr = (string)$episode->EpisodeNumber;
-            $info['seasons'][$season][$episodeNr] = array(
-                'name' => (string)$episode->EpisodeName,
-                'synopsis' => (string)$episode->Overview
+
+            $info[self::INFO_SEASONS][$season][self::INFO_SEASON_EPISODES][$episode->getAiredEpisodeNumber()] = array(
+                self::INFO_EPISODE_ID => $episode->getId(),
+                self::INFO_EPISODE_NAME => $episode->getEpisodeName(),
+                self::INFO_EPISODE_OVERVIEW => $episode->getOverview()
             );
         }
-        
-        $this->setKey('info', $info);
+
+        $cacheFile->putData($info, true);
+
+        $this->setKey(self::KEY_INFO, $info);
     }
-    
-    public function getLinks()
+
+    private function resetInternalCache() : void
+    {
+        $this->seasons = null;
+    }
+
+    /**
+     * @var Season[]|null
+     */
+    private ?array $seasons = null;
+
+    /**
+     * @return Season[]
+     */
+    public function getSeasons() : array
+    {
+        if(isset($this->seasons)) {
+            return $this->seasons;
+        }
+
+        $this->seasons = array();
+
+        $data = $this->getInfo(self::INFO_SEASONS);
+        if(!is_array($data)) {
+            return array();
+        }
+
+        foreach($data as $seasonNumber => $seasonData)
+        {
+            $this->seasons[] = new Season($seasonNumber, $seasonData);
+        }
+
+        return $this->seasons;
+     }
+
+    /**
+     * @return array<int,array{url:string,label:string}>
+     */
+    public function getLinks() : array
     {
         $links = array();
-        $link = $this->getTvcomLink();
-        if($link) {
-            $links[] = array(
-                'url' => $link,
-                'label' => 'TV.com'
-            );
-        }
-        
-        $link = $this->getTvdbLink();
+
+        $link = $this->getTVDBLink();
         if($link) {
             $links[] = array(
                 'url' => $link,
@@ -241,60 +282,116 @@ class Series_Series
         return $links;
     }
     
-    public function setName($name)
+    public function setName(string $name) : bool
     {
-        return $this->setKey('name', $name);
+        return $this->setKey(self::KEY_NAME, $name);
     }
     
-    public function setTvcomID($id)
+    public function setTVDBAlias(string $id) : bool
     {
-        return $this->setKey('tvcom', $id);
+        return $this->setKey(self::KEY_TVDB_ALIAS, $id);
     }
 
-    public function setRarbgID($id)
+    public function setIMDBID(string $id) : bool
     {
-        return $this->setKey('rarbg', $id);
+        return $this->setKey(self::KEY_IMDB_ID, $id);
     }
     
-    public function setTvdbID($id)
+    public function setTVDBID(string $id) : bool
     {
-        return $this->setKey('tvdb', $id);
+        return $this->setKey(self::KEY_TVDB_ID, $id);
     }
+
+    /**
+     * @var string[]
+     */
+    protected array $messages = array();
     
-    protected $messages = array();
-    
-    protected function addMessage($message)
+    protected function addMessage(string $message) : void
     {
-        $this->messages[] = 'Series ['.$this->getName().'] | '.$message;  
+        $this->messages[] = 'Series ['.$this->getName().'] | '.$message;
     }
-    
-    public function getMessages()
+
+    /**
+     * @return string[]
+     */
+    public function getMessages() : array
     {
         return $this->messages;
     }
     
-    public function countSeasons()
+    public function countSeasons() : int
     {
-        $info = $this->getKey('info');
-        if($info) {
-            return count($info['seasons']);
-        }
-        
-        return 0;
+        return count($this->getSeasons());
     }
     
-    public function countEpisodes()
+    public function countEpisodes() : int
     {
-        $info = $this->getKey('info');
-        if(!$info) {
-            return 0;
-        }
-        
+        $seasons = $this->getSeasons();
         $total = 0;
-        foreach($info['seasons'] as $episodes) {
-            $total += count($episodes);
+
+        foreach($seasons as $season)
+        {
+            $total += $season->countEpisodes();
         }
-        
+
         return $total;
+    }
+
+    public function getSynopsis() : string
+    {
+        return (string)$this->getInfo(self::INFO_OVERVIEW);
+    }
+
+    public function hasInfo() : bool
+    {
+        return !empty($this->getKey(self::KEY_INFO));
+    }
+
+    /**
+     * @param string $key
+     * @return string|number|bool|array|NULL
+     */
+    public function getInfo(string $key)
+    {
+        $info = $this->getKey(self::KEY_INFO);
+        if(is_array($info) && isset($info[$key])) {
+            return $info[$key];
+        }
+
+        return null;
+    }
+
+    public function getURLEdit(array $params=array()) : string
+    {
+        $params['page'] = 'edit';
+        $params['id'] = $this->getIMDBID();
+
+        return '?'.http_build_query($params);
+    }
+
+    public function getURLFetch(array $params=array()) : string
+    {
+        $params['fetch'] = 'yes';
+
+        return $this->getURLEdit($params);
+    }
+
+    public function getCurrentSeason() : int
+    {
+        return (int)$this->getInfo(self::INFO_SEASON);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getGenres() : array
+    {
+        $genres = $this->getInfo(self::INFO_GENRE);
+        if(is_array($genres)) {
+            return $genres;
+        }
+
+        return array();
     }
 }
