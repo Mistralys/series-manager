@@ -103,14 +103,14 @@ class Series
         return null;
     }
     
-    public function getLastDLSeason()
+    public function getLastDLSeason() : int
     {
-        return $this->getKey('lastDLSeason');
+        return (int)$this->getKey('lastDLSeason');
     }
     
-    public function getLastDLEpisode()
+    public function getLastDLEpisode() : int
     {
-        return $this->getKey('lastDLEpisode');
+        return (int)$this->getKey('lastDLEpisode');
     }
     
     public function setLastDLSeason($season)
