@@ -8,3 +8,5 @@
 - Core: Added classes for Seasons and Episodes.
 - Core: Namespaced all classes.
 - Core: Now using strict typing in all files.
+- Core: Added the library to index local video files.
+- Core: Added PHPUnit to handle unit tests.
