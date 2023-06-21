@@ -1,6 +1,10 @@
-<?php 
+<?php
 
-    $manager = Manager::getInstance();
+declare(strict_types=1);
+
+use Mistralys\SeriesManager\Manager;
+
+$manager = Manager::getInstance();
 
 ?>
 <!DOCTYPE html>
@@ -24,7 +28,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="./">Series</a>
+          <a class="navbar-brand" href="./">Series Manager</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -33,7 +37,7 @@
                 $activePageID = $manager->getPageID(); 
                 foreach($pages as $pageID => $pageLabel) {
                     $active = '';
-                    if($pageID==$activePageID) {
+                    if($pageID===$activePageID) {
                         $active = ' class="active"';
                     }
                     
@@ -50,7 +54,6 @@
       </div>
     </nav>
     <div class="container">
-        <h1>Series manager</h1>
         <?php echo $manager->getContent(); ?>
         <br>
         <br>

@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Mistralys\SeriesManager\Pages;
+
+use Mistralys\SeriesManager\Manager;
+
 $manager = Manager::getInstance();
 $series = $manager->getSeries();
 
-if(isset($_REQUEST['update']) && isset($_REQUEST['series']) && $_REQUEST['update']=='yes') {
+if(isset($_REQUEST['update'], $_REQUEST['series']) && $_REQUEST['update'] === 'yes') {
     foreach($_REQUEST['series'] as $rarbgID => $data) {
-        $item = $series->getByRarbgID($rarbgID);
+        $item = $series->getByIMDBID($rarbgID);
         $item->setLastDLSeason($data['lastDLSeason']);
         $item->setLastDLEpisode($data['lastDLEpisode']);
     }
@@ -48,7 +54,7 @@ $html .=
             foreach($items as $item) {
                 $html .=
                 '<tr>'.
-                    '<td><a href="?id='.$item->getRarbgID().'">'.$item->getName().'</a></td>'.
+                    '<td><a href="?id='.$item->getIMDBID().'">'.$item->getName().'</a></td>'.
                     '<td>'.$item->getStatus().'</td>'.
                     '<td>'.$item->countSeasons().'</td>'.
                     '<td>'.$item->countEpisodes().'</td>'.
@@ -71,31 +77,31 @@ $html .=
                                 '<div class="input-group-addon">'.
                                     'S'.
                                 '</div>'.
-                                '<input name="series['.$item->getRarbgID().'][lastDLSeason]" type="number" class="form-control" value="'.$item->getLastDLSeason().'" style="width:60px"/>'.
+                                '<input name="series['.$item->getIMDBID().'][lastDLSeason]" type="number" class="form-control" value="'.$item->getLastDLSeason().'" style="width:60px"/>'.
                             '</div> '.
                             '<div class="input-group">'.
                                 '<div class="input-group-addon">'.
                                     'E'.
                                 '</div>'.
-                                '<input name="series['.$item->getRarbgID().'][lastDLEpisode]" type="number" class="form-control" value="'.$item->getLastDLEpisode().'" style="width:60px"/>'.
+                                '<input name="series['.$item->getIMDBID().'][lastDLEpisode]" type="number" class="form-control" value="'.$item->getLastDLEpisode().'" style="width:60px"/>'.
                             '</div>'.
                         '</div>'.
                     '</td>'.
                     '<td>'.
-                        '<a href="?page=edit&id='.$item->getRarbgID().'" class="btn btn-default">'.
+                        '<a href="?page=edit&id='.$item->getIMDBID().'" class="btn btn-default">'.
                             '<i class="glyphicon glyphicon-edit"></i> '.
                         '</a> '.
-                        '<a href="?page=delete&id='.$item->getRarbgID().'" class="btn btn-danger">'.
+                        '<a href="?page=delete&id='.$item->getIMDBID().'" class="btn btn-danger">'.
                             '<i class="glyphicon glyphicon-remove-sign"></i> '.
                         '</a>'.
                     '</td>'.
                 '</tr>';
         
-                if($activeID==$item->getRarbgID()) {
+                if($activeID===$item->getIMDBID()) {
                     $html .=
                     '<tr>'.
                         '<td colspan="7">'.
-                            '<iframe style="width:100%;height:500px;border:0;margin:0;padding:0;" src="'.$item->getRarbgLink().'" seamless="seamless">'.
+                            '<iframe style="width:100%;height:500px;border:0;margin:0;padding:0;" src="'.$item->getRarbgLink().'" seamless>'.
                             '</iframe>'.
                         '</td>'.
                     '</tr>';

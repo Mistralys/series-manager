@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Mistralys\SeriesManager\Pages;
+
+use Mistralys\SeriesManager\Manager;
+
 $manager = Manager::getInstance();
 $series = $manager->getSeries();
 
 if(isset($_REQUEST['confirm'])) {
     $clearCache = false;
-    if(isset($_REQUEST['clear_cache']) && $_REQUEST['clear_cache']=='yes') {
+    if(isset($_REQUEST['clear_cache']) && $_REQUEST['clear_cache'] === 'yes') {
         $clearCache = true;
     }
     
@@ -24,7 +30,7 @@ if(isset($_REQUEST['confirm'])) {
 
 ?>
 <h3>Fetch online data</h3>
-<p>Note: this only works if the tvdb ID is set. Series that do not have it will be skipped.</p>
+<p>Note: this only works if TheTVDB ID is set. Series that do not have it will be skipped.</p>
 <form method="post">
     <div class="checkbox">
         <label>

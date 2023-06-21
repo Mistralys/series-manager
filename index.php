@@ -1,25 +1,25 @@
 <?php
 
-    define('APP_ROOT', dirname(__FILE__));
-    define('APP_TVDB_API_KEY', 'DD47E4235E98B099');
-    
-    if(!file_exists('vendor/autoload.php'))
-    {
-        die('Autoloader missing, run <code>composer update</code>.');
-    }
-    
-    require_once 'vendor/autoload.php';
-    
-    if(!file_exists('config-local.php'))
-    {
-        die('Local configuration file missing.');
-    }
-    
-    require_once 'config-local.php';
-    
-    date_default_timezone_set('Europe/Paris');
-    
-    ini_set('display_errors', 1);error_reporting(E_ALL);
-    
-    $manager = Manager::getInstance();
-    $manager->start();
+declare(strict_types=1);
+
+use Mistralys\SeriesManager\Manager;
+
+const APP_ROOT = __DIR__;
+
+if(!file_exists(__DIR__.'/vendor/autoload.php'))
+{
+    die('Autoloader missing, run <code>composer install</code>.');
+}
+
+require_once __DIR__.'/vendor/autoload.php';
+
+if(!file_exists(__DIR__.'/config-local.php'))
+{
+    die('Local configuration file missing.');
+}
+
+require_once __DIR__.'/config-local.php';
+
+date_default_timezone_set('Europe/Paris');
+
+Manager::getInstance()->start();
