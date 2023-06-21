@@ -43,11 +43,13 @@ class Series
         return $this->data[$name] ?? $default;
     }
     
-    public function getName() : string
+    public function getName(bool $appendThe=true) : string
     {
         $name = (string)$this->getKey(self::KEY_NAME);
-        if(strpos($name, 'The') === 0) {
-            $name = substr($name, 4).', The';
+
+        if($appendThe && strpos($name, 'The') === 0)
+        {
+            $name = substr($name, 4) . ', The';
         }
         
         return $name;
@@ -278,7 +280,7 @@ class Series
             );
         }
 
-        return array_merge($links, Manager::getInstance()->prepareCustomLinks($this->getName()));
+        return array_merge($links, Manager::getInstance()->prepareCustomLinks($this->getName(false)));
     }
     
     public function setName(string $name) : bool
