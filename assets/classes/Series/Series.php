@@ -244,6 +244,11 @@ class Series
 
         foreach($data as $seasonNumber => $seasonData)
         {
+            // Skip 0 seasons
+            if($seasonNumber <= 0) {
+                continue;
+            }
+
             $this->seasons[] = new Season($this, $seasonNumber, $seasonData);
         }
 
@@ -359,9 +364,15 @@ class Series
     public function getURLEdit(array $params=array()) : string
     {
         $params['page'] = 'edit';
-        $params['id'] = $this->getIMDBID();
 
-        return '?'.http_build_query($params);
+        return $this->getURL($params);
+    }
+
+    public function getURLDelete(array $params=array()) : string
+    {
+        $params['page'] = 'delete';
+
+        return $this->getURL($params);
     }
 
     public function getURLFetch(array $params=array()) : string
@@ -369,6 +380,13 @@ class Series
         $params['fetch'] = 'yes';
 
         return $this->getURLEdit($params);
+    }
+
+    protected function getURL(array $params=array()) : string
+    {
+        $params['id'] = $this->getIMDBID();
+
+        return '?'.http_build_query($params);
     }
 
     public function getCurrentSeason() : int
