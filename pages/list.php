@@ -10,8 +10,8 @@ $manager = Manager::getInstance();
 $series = $manager->getSeries();
 
 if(isset($_REQUEST['update'], $_REQUEST['series']) && $_REQUEST['update'] === 'yes') {
-    foreach($_REQUEST['series'] as $rarbgID => $data) {
-        $item = $series->getByIMDBID($rarbgID);
+    foreach($_REQUEST['series'] as $imdbID => $data) {
+        $item = $series->getByIMDBID($imdbID);
         $item->setLastDLSeason($data['lastDLSeason']);
         $item->setLastDLEpisode($data['lastDLEpisode']);
     }
