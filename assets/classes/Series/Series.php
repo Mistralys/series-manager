@@ -7,12 +7,13 @@ namespace Mistralys\SeriesManager\Series;
 use Adrenth\Thetvdb\Client;
 use Adrenth\Thetvdb\Model\BasicEpisode;
 use AppUtils\FileHelper\JSONFile;
+use Mistralys\SeriesManager\Manager;
 
 class Series
 {
-    public const KEY_TVDB_ALIAS = 'tvcom';
-    public const KEY_TVDB_ID = 'tvdb';
-    public const KEY_IMDB_ID = 'rarbg';
+    public const KEY_TVDB_ALIAS = 'tvdbAlias';
+    public const KEY_TVDB_ID = 'tvdbID';
+    public const KEY_IMDB_ID = 'imdbID';
     public const KEY_NAME = 'name';
     public const INFO_STATUS = 'status';
     public const INFO_GENRE = 'genre';
@@ -243,7 +244,7 @@ class Series
 
         foreach($data as $seasonNumber => $seasonData)
         {
-            $this->seasons[] = new Season($seasonNumber, $seasonData);
+            $this->seasons[] = new Season($this, $seasonNumber, $seasonData);
         }
 
         return $this->seasons;
@@ -271,15 +272,8 @@ class Series
                 'label' => 'IMDB'
             );
         }
-        
-        $link = $this->getRarbgLink();
-        if($link) {
-            $links[] = array(
-                'url' => $link,
-                'label' => 'RARBG'
-            );
-        }
-        return $links;
+
+        return array_merge($links, Manager::getInstance()->prepareCustomLinks($this->getName()));
     }
     
     public function setName(string $name) : bool
