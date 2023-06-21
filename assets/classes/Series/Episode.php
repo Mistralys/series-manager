@@ -7,6 +7,8 @@ namespace Mistralys\SeriesManager\Series;
 use AppUtils\ArrayDataCollection;
 use AppUtils\FileHelper\JSONFile;
 use Mistralys\SeriesManager\Manager;
+use Mistralys\SeriesManager\Manager\Library;
+use Mistralys\SeriesManager\Manager\LibraryFile;
 
 class Episode
 {
@@ -73,11 +75,35 @@ class Episode
         return $this->getNumber() <= $lastestEpisode;
     }
 
+    public function isFoundOnDisk() : bool
+    {
+        return $this->findInLibrary() !== null;
+    }
+
+    public function getSeries() : Series
+    {
+        return $this->getSeason()->getSeries();
+    }
+
+    public function getSeasonNumber() : int
+    {
+        return $this->getSeason()->getNumber();
+    }
+
+    public function findInLibrary() : ?LibraryFile
+    {
+        return Library::createFromConfig()->findEpisode(
+            $this->getSeries()->getName(false),
+            $this->getSeasonNumber(),
+            $this->getNumber()
+        );
+    }
+
     public function getSearchString() : string
     {
         return sprintf(
             '%s s%02de%02d',
-            $this->getSeason()->getSeries()->getName(),
+            $this->getSeason()->getSeries()->getName(false),
             $this->getSeason()->getNumber(),
             $this->getNumber()
         );
