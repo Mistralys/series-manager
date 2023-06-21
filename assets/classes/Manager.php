@@ -11,40 +11,22 @@ use Mistralys\SeriesManager\SeriesCollection;
 
 class Manager
 {
-    /**
-     * @var SeriesCollection
-     */
-    protected $series;
-
-    /**
-     * @var string
-     */
-    protected $page = 'list';
-
-    /**
-     * @var Manager
-     */
-    protected static $instance;
-
-    /**
-     * @var boolean
-     */
-    private $loggedIn = false;
+    protected SeriesCollection $series;
+    protected string $page = 'list';
+    protected static ?Manager $instance = null;
+    private bool $loggedIn = false;
+    protected string $version;
 
     /**
      * @var array<string,string>
      */
-    protected $pages = array(
+    protected array $pages = array(
         'list' => 'Home',
         'add' => 'Add new',
         'fetch' => 'Fetch data',
+        'library' => 'Library',
         'login' => 'Login'
     );
-
-    /**
-     * @var string
-     */
-    protected $version;
 
     public static function getInstance() : Manager
     {
