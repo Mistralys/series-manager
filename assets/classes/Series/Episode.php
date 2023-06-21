@@ -54,6 +54,25 @@ class Episode
         return Manager::getInstance()->prepareCustomLinks($this->getSearchString());
     }
 
+    public function isDownloaded() : bool
+    {
+        $series = $this->getSeason()->getSeries();
+
+        $mySeason = $this->getSeason()->getNumber();
+        $latestSeason = $series->getLastDLSeason();
+        $lastestEpisode = $series->getLastDLEpisode();
+
+        if($mySeason > $latestSeason) {
+            return false;
+        }
+
+        if($mySeason < $latestSeason) {
+            return true;
+        }
+
+        return $this->getNumber() <= $lastestEpisode;
+    }
+
     public function getSearchString() : string
     {
         return sprintf(
