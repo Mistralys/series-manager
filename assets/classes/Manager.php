@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mistralys\SeriesManager;
 
 use Adrenth\Thetvdb\Client;
+use AppUtils\FileHelper\JSONFile;
 use Mistralys\SeriesManager\Series\Series;
 use Mistralys\SeriesManager\SeriesCollection;
 
@@ -204,5 +205,80 @@ class Manager
         $this->client = $client;
 
         return $client;
+    }
+
+    /**
+     * @var array<int,array{label:string,template:string}>|null
+     */
+    private ?array $linkDefs = null;
+
+    public function getCustomLinkDefs() : array
+    {
+        if(isset($this->linkDefs)) {
+            return $this->linkDefs;
+        }
+
+        $file = JSONFile::factory(__DIR__.'/../../search-links.json');
+
+        if(!$file->exists()) {
+            return array();
+        }
+
+        $linkDefs = $file->parse();
+        $this->linkDefs = array();
+
+        foreach($linkDefs as $def)
+        {
+            if(!isset($def['template'], $def['label'])) {
+                continue;
+            }
+
+            $this->linkDefs[] = array(
+                'template' => (string)$def['template'],
+                'label' => (string)$def['label']
+            );
+        }
+
+        return $this->linkDefs;
+    }
+
+    /**
+     * @param string $searchTerm
+     * @return array<int,array{label:string,url:string}>
+     */
+    public function prepareCustomLinks(string $searchTerm) : array
+    {
+        return $this->prepareLinks($this->getCustomLinkDefs(), $searchTerm);
+    }
+
+    /**
+     * @param array<int,array{label:string,template:string}> $linkDefs
+     * @return array<int,array{label:string,url:string}>
+     */
+    public function prepareLinks(array $linkDefs, string $searchTerm) : array
+    {
+        $variables = array(
+            '{SEARCH}' => rawurlencode($searchTerm)
+        );
+
+        $keys = array_keys($variables);
+        $values = array_values($variables);
+        $result = array();
+
+        foreach($linkDefs as $linkDef)
+        {
+            $url = str_replace(
+                $keys,
+                $values,
+                $linkDef['template']
+            );
+
+            $result[] = array(
+                'label' => $linkDef['label'],
+                'url' => $url
+            );
+        }
+
+        return $result;
     }
 }
