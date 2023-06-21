@@ -99,7 +99,7 @@ foreach($seasons as $season)
             <tr>
                 <td style="text-align: center">
                     <?php
-                    if($episode->isDownloaded()) {
+                    if($episode->isFoundOnDisk() || $episode->isDownloaded()) {
                         ?>
                         <i class="glyphicon glyphicon-ok-sign text-success"></i>
                         <?php
