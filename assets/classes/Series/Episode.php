@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Mistralys\SeriesManager\Series;
 
 use AppUtils\ArrayDataCollection;
-use AppUtils\FileHelper\JSONFile;
+use AppUtils\OutputBuffering;
 use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\Manager\Library;
-use Mistralys\SeriesManager\Manager\LibraryFile;
+use Mistralys\SeriesManager\Manager\LibraryFile;use function AppLocalize\pt;
 
 class Episode
 {
@@ -73,6 +73,32 @@ class Episode
         }
 
         return $this->getNumber() <= $lastestEpisode;
+    }
+
+    public function getDownloadStatusIcon() : string
+    {
+        OutputBuffering::start();
+
+        if($this->isFoundOnDisk())
+        {
+            ?>
+            <i title="<?php pt('Found in the local library') ?>" class="glyphicon glyphicon-star" style="color: #ffda00;border: solid 1px #ffda00;border-radius: 3px;"></i>
+            <?php
+        }
+        else if($this->isDownloaded())
+        {
+            ?>
+            <i title="<?php pt('Downloaded according to the saved season and episode numbers') ?>" class="glyphicon glyphicon-ok-sign text-success"></i>
+            <?php
+        }
+        else
+        {
+            ?>
+            <i title="<?php pt('Never downloaded.') ?>" class="glyphicon glyphicon-remove-sign text-danger"></i>
+            <?php
+        }
+
+        return OutputBuffering::get();
     }
 
     public function isFoundOnDisk() : bool
