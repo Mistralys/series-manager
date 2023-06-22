@@ -99,15 +99,7 @@ foreach($seasons as $season)
             <tr>
                 <td style="text-align: center">
                     <?php
-                    if($episode->isFoundOnDisk() || $episode->isDownloaded()) {
-                        ?>
-                        <i class="glyphicon glyphicon-ok-sign text-success"></i>
-                        <?php
-                    } else {
-                        ?>
-                        <i class="glyphicon glyphicon-remove-sign text-danger"></i>
-                        <?php
-                    }
+                    echo $episode->getDownloadStatusIcon();
                     ?>
                 </td>
                 <td style="text-align: right"><?php echo sprintf('%02d', $episode->getNumber()) ?></td>
