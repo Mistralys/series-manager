@@ -1,6 +1,6 @@
 # Series Manager
 
-PHP web tool that keeps track of TV series watched and downloaded.
+Web-based tool for keeping track of TV series watched and downloaded.
 
 ## Setup
 
@@ -41,11 +41,14 @@ Game.Of.Thrones.S01E05.This.Day.All.Gods.Die.mp4
 
 This example will use the name `game of thrones`.
 
-Solution:
+The automatically detected name can be adjusted in the Library 
+UI in the "Name aliases" tab.
 
-The best way to solve this is to rename the video files. The
-recognition has gone through many trials, and the current
-implementation gives the best results overall.
+Example:
+
+- Detected name: `got`.
+- Enter alias: `game of thrones`.
+- Refresh the index. 
 
 ## Customizing
 
