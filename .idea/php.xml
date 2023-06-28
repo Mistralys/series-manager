@@ -19,7 +19,6 @@
       <path value="$PROJECT_DIR$/vendor/neitanod/forceutf8" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
       <path value="$PROJECT_DIR$/vendor/mistralys/jtokenizer" />
-      <path value="$PROJECT_DIR$/vendor/pear/pear_exception" />
       <path value="$PROJECT_DIR$/vendor/mistralys/html_quickform2" />
       <path value="$PROJECT_DIR$/vendor/voku/portable-ascii" />
       <path value="$PROJECT_DIR$/vendor/adrenth/thetvdb2" />
@@ -77,6 +76,11 @@
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
+  <component name="PhpStan">
+    <PhpStan_settings>
+      <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
+    </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />

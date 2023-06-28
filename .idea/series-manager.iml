@@ -12,7 +12,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/neitanod/forceutf8" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php80" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mistralys/jtokenizer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/pear/pear_exception" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mistralys/html_quickform2" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/adrenth/thetvdb2" />
