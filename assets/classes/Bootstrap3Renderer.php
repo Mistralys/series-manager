@@ -78,6 +78,8 @@ class Bootstrap3Renderer extends HTML_QuickForm2_Renderer
         }
         else
         {
+            $element->addClass('form-control');
+
             ?>
             <div class="form-group <?php echo $errorClass ?>">
                 <label for="<?php echo $element->getId() ?>"><?php echo $element->getLabel() ?></label>
