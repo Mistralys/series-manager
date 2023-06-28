@@ -14,6 +14,11 @@ use const Mistralys\SeriesManager\APP_LIBRARY_PATHS;
 
 class Library
 {
+    public const TAB_INDEX_STATUS = 'index-status';
+    public const TAB_NAME_ALIASES = 'name-aliases';
+    public const TAB_FILES_LIST = 'files-list';
+    public const DEFAULT_TAB = self::TAB_INDEX_STATUS;
+
     /**
      * @var FolderInfo[]
      */
@@ -32,6 +37,7 @@ class Library
         'mkv'
     );
     private JSONFile $cacheFile;
+    private JSONFile $aliasesFile;
 
     /**
      * @param array<int,string|FolderInfo|SplFileInfo> $paths
@@ -39,6 +45,7 @@ class Library
     public function __construct(array $paths)
     {
         $this->cacheFile = JSONFile::factory(__DIR__.'/../../../cache/library.json');
+        $this->aliasesFile = JSONFile::factory(__DIR__.'/../../../data/name-aliases.json');
 
         foreach($paths as $path)
         {
@@ -56,8 +63,16 @@ class Library
         $this->cacheFile->delete();
     }
 
+    public function getURLFilesList(array $params=array()) : string
+    {
+        $params['tab'] = self::TAB_FILES_LIST;
+
+        return $this->getURL($params);
+    }
+
     public function getURLCreateIndex(array $params=array()) : string
     {
+        $params['tab'] = self::TAB_INDEX_STATUS;
         $params['create-index'] = 'yes';
 
         return $this->getURL($params);
@@ -65,6 +80,7 @@ class Library
 
     public function getURLClearCache(array $params=array()) : string
     {
+        $params['tab'] = self::TAB_INDEX_STATUS;
         $params['clear-cache'] = 'yes';
 
         return $this->getURL($params);
@@ -75,6 +91,13 @@ class Library
         $params['page'] = 'library';
 
         return '?'.http_build_query($params);
+    }
+
+    public function getURLNameAliases(array $params=array()) : string
+    {
+        $params['tab'] = self::TAB_NAME_ALIASES;
+
+        return $this->getURL($params);
     }
 
     private static ?Library $configInstance = null;
@@ -304,14 +327,67 @@ class Library
         }
 
         return array(
-            'name' => implode(' ', $keep),
+            'name' => $this->getNameAlias(implode(' ', $keep)),
             'season' => (int)$matches[1],
             'episode' => (int)$matches[2]
         );
     }
 
+    public function getNameAlias(string $name) : string
+    {
+        $aliases = $this->getNameAliases();
+
+        return $aliases[$name] ?? $name;
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    public function getNameAliases() : array
+    {
+        if($this->aliasesFile->exists()) {
+            return $this->aliasesFile->parse();
+        }
+
+        return array();
+    }
+
+    public function setNameAlias(string $name, string $alias) : self
+    {
+        $aliases = $this->getNameAliases();
+        $aliases[$name] = $alias;
+        $this->aliasesFile->putData($aliases, true);
+        return $this;
+    }
+
     public function cacheExists() : bool
     {
         return $this->cacheFile->exists();
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSeriesNames() : array
+    {
+        $files = $this->getFiles();
+        $names = array();
+
+        foreach($files as $file)
+        {
+            $names[$file->getName()] = null;
+        }
+
+        ksort($names);
+
+        return array_keys($names);
+    }
+
+    public function deleteNameAlias(string $name) : self
+    {
+        $aliases = $this->getNameAliases();
+        unset($aliases[$name]);
+        $this->aliasesFile->putData($aliases, true);
+        return $this;
     }
 }
