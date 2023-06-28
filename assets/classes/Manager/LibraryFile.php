@@ -49,13 +49,21 @@ class LibraryFile
         return $this->name;
     }
 
+    public function getEpisodeName() : string
+    {
+        return sprintf(
+            'S%02dE%02d',
+            $this->getSeason(),
+            $this->getEpisode()
+        );
+    }
+
     public function getNameWithEpisode() : string
     {
         return sprintf(
-            '%s S%02dE%02d',
+            '%s %s',
             $this->getName(),
-            $this->getSeason(),
-            $this->getEpisode()
+            $this->getEpisodeName()
         );
     }
 
