@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Mistralys\SeriesManager\Pages;
 
-use HTML_QuickForm2;
-use HTML_QuickForm2_Renderer;
-use Mistralys\SeriesManager\Bootstrap3Renderer;
+use Mistralys\SeriesManager\FormHandler;
 use Mistralys\SeriesManager\Manager;
 
 $manager = Manager::getInstance();
@@ -34,7 +32,8 @@ if($manager->isLoggedIn())
     return;
 }
 
-$form = new HTML_QuickForm2('seriesmanager-login');
+$formHandler = new FormHandler('seriesmanager-login');
+$form = $formHandler->getForm();
 
 $el = $form->addPassword('password');
 $el->setLabel('Password');
@@ -47,13 +46,9 @@ $btn->setAttribute('type', 'submit');
 $btn->setContent('Sign in');
 $btn->addClass('btn btn-primary');
 
-HTML_QuickForm2_Renderer::register('Bootstrap3', Bootstrap3Renderer::class);
-
-$renderer = HTML_QuickForm2_Renderer::factory('Bootstrap3');
-
-if($form->isSubmitted() && $form->validate())
+if($formHandler->isValid())
 {
-    $values = $form->getValues();
+    $values = $formHandler->getValues();
 
     $_SESSION['auth'] = $manager->encodePassword($values['password']);
 
@@ -66,4 +61,4 @@ if($form->isSubmitted() && $form->validate())
 <p>
 	Please log in with the configured password.
 </p>
-<?php echo $form->render($renderer) ?>
+<?php $formHandler->display() ?>
