@@ -4,94 +4,41 @@ declare(strict_types=1);
 
 namespace Mistralys\SeriesManager\Pages;
 
-use AppUtils\ConvertHelper;
 use Mistralys\SeriesManager\Manager\Library;
-use Mistralys\SeriesManager\Manager\LibraryFile;
+use function AppLocalize\pt;
+use function AppLocalize\t;
 
 $library = Library::createFromConfig();
 
-if(isset($_REQUEST['clear-cache']) && $_REQUEST['clear-cache'] === 'yes')
-{
-    $library->clearCache();
-    header('Location:'.$library->getURL());
+$tabs = array(
+    Library::TAB_INDEX_STATUS => t('Index status'),
+    Library::TAB_NAME_ALIASES => t('Name aliases'),
+    Library::TAB_FILES_LIST => t('Files list')
+);
+
+$activeTabID = Library::DEFAULT_TAB;
+if(isset($_REQUEST['tab'], $tabs[$_REQUEST['tab']])) {
+    $activeTabID = $_REQUEST['tab'];
 }
-
-if(isset($_REQUEST['create-index']) && $_REQUEST['create-index'] === 'yes')
-{
-    $library->createIndex();
-    header('Location:'.$library->getURL());
-}
-
-$files = $library->getFiles();
-
-usort($files, static function(LibraryFile $a, LibraryFile $b) {
-    return strnatcasecmp($a->getNameWithEpisode(), $b->getNameWithEpisode());
-});
-
-$cacheExists = $library->cacheExists();
 
 ?>
-<h3>Series library</h3>
-<p>
-    Index last updated:
+<h3><?php pt('Series library'); ?></h3>
+<br>
+<ul class="nav nav-tabs">
     <?php
-    if($cacheExists)
-    {
-        echo ConvertHelper::date2listLabel($library->getCacheFile()->getModifiedDate(), true, true);
-        ?>
-        <br>
-        Total files: <?php echo number_format(count($files), 0, '', ' ') ?>
-        <?php
-    }
-    else
+    foreach($tabs as $tabID => $label)
     {
         ?>
-        <i class="text-muted">Never</i>
+        <li class="<?php if($tabID === $activeTabID) {echo 'active'; } ?>">
+            <a href="<?php echo $library->getURL(array('tab' => $tabID)) ?>">
+                <?php echo $label ?>
+            </a>
+        </li>
         <?php
     }
     ?>
-</p>
-<p>
-    <a href="<?php echo $library->getURLCreateIndex() ?>" class="btn btn-default">
-        <?php
-        if($cacheExists)
-        {
-            ?>
-            <i class="glyphicon glyphicon-refresh"></i>
-            Refresh index now
-            <?php
-        }
-        else
-        {
-            ?>
-            <i class="glyphicon glyphicon-floppy-save"></i>
-            Build index now
-            <?php
-        }
-        ?>
-    </a>
-</p>
+</ul>
+<br>
 <?php
 
-if($cacheExists)
-{
-    ?>
-    <hr>
-    <h4>Files list</h4>
-    <table class="table">
-        <tbody>
-        <?php
-        foreach($files as $file)
-        {
-            ?>
-            <tr>
-                <td style="white-space: nowrap"><?php echo $file->getNameWithEpisode() ?></td>
-                <td><?php echo $file->getFile()->getName() ?></td>
-            </tr>
-            <?php
-        }
-        ?>
-        </tbody>
-    </table>
-    <?php
-}
+include __DIR__.'/library/'.$activeTabID.'.php';
