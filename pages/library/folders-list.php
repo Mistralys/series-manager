@@ -47,6 +47,7 @@ if(!empty($folders))
                 <a href="?page=library&tab=folders-list&sortBy=date&sortDir=asc">^</a>
                 <a href="?page=library&tab=folders-list&sortBy=date&sortDir=desc">v</a>
             </th>
+            <th><?php pt('Library folder'); ?></th>
             <th><?php pt('Actions'); ?></th>
         </tr>
         </thead>
@@ -74,6 +75,7 @@ if(!empty($folders))
                     ?>
                 </td>
                 <td style="text-align: right"><?php echo ConvertHelper::date2listLabel($folder->getDate()) ?></td>
+                <td><?php echo $folder->getLibraryFolderName() ?></td>
                 <td>
                     <?php
                     if(!$folder->exists())

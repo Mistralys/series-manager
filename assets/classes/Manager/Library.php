@@ -220,7 +220,7 @@ class Library
 
         foreach($subfolders as $subfolder)
         {
-            $this->indexSubfolder(FolderInfo::factory($path.'/'.$subfolder));
+            $this->indexSubfolder($path->getName(), FolderInfo::factory($path.'/'.$subfolder));
         }
     }
 
@@ -260,13 +260,14 @@ class Library
         '.svn'
     );
 
-    private function indexSubfolder(FolderInfo $subfolder) : void
+    private function indexSubfolder(string $libraryFolderName, FolderInfo $subfolder) : void
     {
         if(in_array($subfolder->getName(), $this->excludeFolders, true)) {
             return;
         }
 
         $this->registerFolder(new LibrarySubfolder(
+            $libraryFolderName,
             $subfolder,
             $subfolder->getName(),
             $subfolder->getModifiedDate()

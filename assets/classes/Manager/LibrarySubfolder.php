@@ -17,15 +17,18 @@ class LibrarySubfolder
     public const KEY_PATH = 'path';
     public const KEY_NAME = 'name';
     public const KEY_DATE = 'date';
+    public const KEY_LIBRARY_FOLDER = 'libraryFolderName';
 
     private FolderInfo $folder;
     private string $name;
     private DateTime $date;
     private ?Series $series = null;
     private bool $seriesSearched = false;
+    private string $libraryFolderName;
 
-    public function __construct(FolderInfo $folder, string $name, DateTime $date)
+    public function __construct(string $libraryFolderName, FolderInfo $folder, string $name, DateTime $date)
     {
+        $this->libraryFolderName = $libraryFolderName;
         $this->folder = $folder;
         $this->name = $name;
         $this->date = $date;
@@ -34,6 +37,11 @@ class LibrarySubfolder
     public function getPath() : FolderInfo
     {
         return $this->folder;
+    }
+
+    public function getLibraryFolderName() : string
+    {
+        return $this->libraryFolderName;
     }
 
     public function getName() : string
@@ -97,13 +105,15 @@ class LibrarySubfolder
         return array(
             self::KEY_PATH => $this->folder->getPath(),
             self::KEY_NAME => $this->name,
-            self::KEY_DATE => Microtime::createFromDate($this->date)->getISODate()
+            self::KEY_DATE => Microtime::createFromDate($this->date)->getISODate(),
+            self::KEY_LIBRARY_FOLDER => $this->getLibraryFolderName()
         );
     }
 
     public static function createFromArray(array $def) : LibrarySubfolder
     {
         return new LibrarySubfolder(
+            $def[self::KEY_LIBRARY_FOLDER] ?? '',
             FolderInfo::factory($def[self::KEY_PATH]),
             $def[self::KEY_NAME],
             Microtime::createFromString($def[self::KEY_DATE])
