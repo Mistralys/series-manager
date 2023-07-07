@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Mistralys\SeriesManager\Pages;
 
+use AppUtils\Request;
 use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\Series\Episode;
 use Mistralys\SeriesManager\Series\Season;
 use Mistralys\SeriesManager\Series\SeriesForm;
+use function AppLocalize\pt;
+use function AppLocalize\t;
 use function AppUtils\sb;
 
+$request = Request::getInstance();
 $manager = Manager::getInstance();
 $selected = $manager->getSelected();
 
@@ -17,10 +21,10 @@ if($selected === null) {
     die('No series selected.');
 }
 
-if(isset($_REQUEST['fetch']) && $_REQUEST['fetch'] === 'yes')
+if($request->getBool('fetch'))
 {
     $client = $manager->createClient();
-    $selected->fetchData($client);
+    $selected->fetchData($client, $request->getBool('clear'));
     $manager->getSeries()->save();
 
     header('Location:'.$selected->getURLEdit());
@@ -36,20 +40,20 @@ if($selected->hasInfo())
     <table class="table">
         <tbody>
             <tr>
-                <th>Status</th>
+                <th><?php pt('Status') ?></th>
                 <td><?php echo $selected->getStatus() ?></td>
             </tr>
             <tr>
-                <th>Current season</th>
+                <th><?php pt('Current season') ?></th>
                 <td><?php echo $selected->getCurrentSeason() ?></td>
             </tr>
             <tr>
-                <th>Synopsis</th>
+                <th><?php pt('Synopsis') ?></th>
                 <td><?php echo $selected->getSynopsis() ?></td>
             </tr>
 
             <tr>
-                <th>Genres</th>
+                <th><?php pt('Genres') ?></th>
                 <td><?php echo implode(', ', $selected->getGenres()) ?></td>
             </tr>
         </tbody>
@@ -57,12 +61,16 @@ if($selected->hasInfo())
     <?php
 }
 ?>
-<a href="<?php echo $selected->getURLFetch() ?>" class="btn btn-primary">
+<a href="<?php echo $selected->getURLFetch() ?>" class="btn btn-primary" title="<?php pt('Fetches data, using the cache if available.'); ?>">
     <i class="glyphicon glyphicon-download"></i>
-    Fetch data
+    <?php pt('Fetch data') ?>
 </a>
+    <a href="<?php echo $selected->getURLClearAndFetch() ?>" class="btn btn-default" title="<?php pt('Clears the cache and fetches fresh data.') ?>">
+        <i class="glyphicon glyphicon-download"></i>
+        <?php echo htmlspecialchars(t('Clear & fetch')) ?>
+    </a>
 <hr>
-<h3>Seasons overview</h3>
+<h3><?php pt('Seasons overview') ?></h3>
 <?php
 $seasons = $selected->getSeasons();
 
@@ -73,7 +81,7 @@ usort($seasons, static function(Season $a, Season $b) : int {
 foreach($seasons as $season)
 {
     ?>
-    <h4>Season <?php echo $season->getNumber()  ?></h4>
+    <h4><?php pt('Season') ?> <?php echo $season->getNumber()  ?></h4>
     <table class="table">
         <tbody>
         <?php
