@@ -1,6 +1,14 @@
 # Series Manager
 
-Web-based tool for keeping track of TV series watched and downloaded.
+Web-based tool for keeping track of TV series watched and stored 
+locally on disk, with [TheTVDB][] integration to fetch episode 
+information.
+
+## Requirements
+
+- Webserver with PHP 7.4+
+- [Composer][]
+- [TheTVDB][] API account
 
 ## Setup
 
@@ -77,3 +85,6 @@ then paste the following into it:
 You may add several websites. The `{SEARCH}` placeholder in the 
 URL template is replaced by the series' or episode's name and
 number.
+
+[TheTVDB]: https://thetvdb.com/
+[Composer]: https://getcomposer.org
