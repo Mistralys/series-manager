@@ -27,6 +27,11 @@ usort($files, static function(LibraryFile $a, LibraryFile $b) {
 if(!empty($files))
 {
     ?>
+    <p>
+        <?php
+        pt('Found %1$s files.', count($files));
+        ?>
+    </p>
     <table class="table">
         <thead>
         <tr>
