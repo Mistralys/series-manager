@@ -74,6 +74,8 @@ class SeriesForm
 
         if (isset($this->series))
         {
+            $series = $this->series;
+
             $this->series->setName($name);
             $this->series->setTVDBAlias($alias);
             $this->series->setIMDBID($imdbID);
@@ -81,7 +83,7 @@ class SeriesForm
         }
         else
         {
-            $this->collection->add(array(
+            $series = $this->collection->add(array(
                 Series::KEY_NAME => $name,
                 Series::KEY_TVDB_ALIAS => $alias,
                 Series::KEY_IMDB_ID => $imdbID,
@@ -91,7 +93,7 @@ class SeriesForm
 
         $this->collection->save();
 
-        header('Location:./');
+        header('Location:'.$series->getURLEdit());
         exit;
     }
 
