@@ -3,6 +3,7 @@
 - Library: Added folder list with links to known series.
 - Library: Added direct link to the add form with a specific name. 
 - UI: Added "Clear and fetch" button in the edit screen.
+- UI: After adding, the edit screen is now shown.
 
 ## v2.0.0 - API and feature update
 - UI: Removed obsolete tv.com links and mentions.
