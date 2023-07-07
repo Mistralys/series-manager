@@ -1,4 +1,10 @@
-## 2.0.0 - API and feature update
+## v2.1.0 - Library update
+- Library: Added folders indexing.
+- Library: Added folder list with links to known series.
+- Library: Added direct link to the add form with a specific name. 
+- UI: Added "Clear and fetch" button in the edit screen.
+
+## v2.0.0 - API and feature update
 - UI: Removed obsolete tv.com links and mentions.
 - UI: Search links are now shown once some text has been typed.
 - UI: Added series info in the edit screen.
@@ -11,5 +17,5 @@
 - Core: Added the library to index local video files.
 - Core: Added PHPUnit to handle unit tests.
 
-## 1.0.0 - Unreleased
+## v1.0.0 - Unreleased
 - Initial feature set, never released.
