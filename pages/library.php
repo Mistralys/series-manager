@@ -13,12 +13,13 @@ $library = Library::createFromConfig();
 $tabs = array(
     Library::TAB_INDEX_STATUS => t('Index status'),
     Library::TAB_NAME_ALIASES => t('Name aliases'),
-    Library::TAB_FILES_LIST => t('Files list')
+    Library::TAB_FILES_LIST => t('Files list'),
+    Library::TAB_FOLDERS_LIST => t('Folders list')
 );
 
 $activeTabID = Library::DEFAULT_TAB;
-if(isset($_REQUEST['tab'], $tabs[$_REQUEST['tab']])) {
-    $activeTabID = $_REQUEST['tab'];
+if(isset($_REQUEST[Library::REQUEST_VAR_TAB], $tabs[$_REQUEST[Library::REQUEST_VAR_TAB]])) {
+    $activeTabID = $_REQUEST[Library::REQUEST_VAR_TAB];
 }
 
 ?>
@@ -30,7 +31,7 @@ if(isset($_REQUEST['tab'], $tabs[$_REQUEST['tab']])) {
     {
         ?>
         <li class="<?php if($tabID === $activeTabID) {echo 'active'; } ?>">
-            <a href="<?php echo $library->getURL(array('tab' => $tabID)) ?>">
+            <a href="<?php echo $library->getURL(array(Library::REQUEST_VAR_TAB => $tabID)) ?>">
                 <?php echo $label ?>
             </a>
         </li>
