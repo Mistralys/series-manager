@@ -11,6 +11,7 @@ const REQUEST_VAR_DELETE_ALIAS = 'delete-alias';
 use AppUtils\Request;
 use HTML_QuickForm2_Rule_Required;
 use Mistralys\SeriesManager\FormHandler;
+use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\Manager\Library;
 use function AppLocalize\pt;
 use function AppLocalize\pts;
@@ -95,7 +96,7 @@ else
 $formHandler = new FormHandler('name-aliases');
 $form = $formHandler->getForm();
 
-$formHandler->addHiddenVar('page', 'library');
+$formHandler->addHiddenVar(Manager::REQUEST_PARAM_PAGE, 'library');
 $formHandler->addHiddenVar('tab', Library::TAB_NAME_ALIASES);
 
 $name = $form->addSelect(SETTING_NAME);
