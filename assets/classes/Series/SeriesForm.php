@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mistralys\SeriesManager\Series;
 
 use AppUtils\OutputBuffering;
+use AppUtils\Request;
 use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\Series\Series;
 use Mistralys\SeriesManager\SeriesCollection;
@@ -15,6 +16,7 @@ class SeriesForm
     public const SETTING_TVDB_ALIAS = 'tvdbalias';
     public const SETTING_TVDB_ID = 'tvdbid';
     public const SETTING_NAME = 'name';
+    public const REQUEST_PARAM_NAME_SEARCH = 'name-search';
 
     private ?Series $series;
     private SeriesCollection $collection;
@@ -44,6 +46,9 @@ class SeriesForm
     {
         if (!isset($this->series))
         {
+            $request = Request::getInstance();
+
+            $this->values[self::SETTING_NAME] = $request->getFilteredParam(self::REQUEST_PARAM_NAME_SEARCH);
             return;
         }
 
