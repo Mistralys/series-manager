@@ -365,14 +365,14 @@ class Series
 
     public function getURLEdit(array $params=array()) : string
     {
-        $params['page'] = 'edit';
+        $params[Manager::REQUEST_PARAM_PAGE] = 'edit';
 
         return $this->getURL($params);
     }
 
     public function getURLDelete(array $params=array()) : string
     {
-        $params['page'] = 'delete';
+        $params[Manager::REQUEST_PARAM_PAGE] = 'delete';
 
         return $this->getURL($params);
     }
@@ -382,6 +382,13 @@ class Series
         $params['fetch'] = 'yes';
 
         return $this->getURLEdit($params);
+    }
+
+    public function getURLClearAndFetch(array $params=array()) : string
+    {
+        $params['clear'] = 'yes';
+
+        return $this->getURLFetch($params);
     }
 
     protected function getURL(array $params=array()) : string
