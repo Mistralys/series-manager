@@ -9,15 +9,22 @@ use AppUtils\FileHelper;
 use AppUtils\FileHelper\FileInfo;
 use AppUtils\FileHelper\FolderInfo;
 use AppUtils\FileHelper\JSONFile;
+use Mistralys\SeriesManager\Manager;
 use SplFileInfo;
 use const Mistralys\SeriesManager\APP_LIBRARY_PATHS;
 
 class Library
 {
+    public const REQUEST_VAR_TAB = 'tab';
+
     public const TAB_INDEX_STATUS = 'index-status';
     public const TAB_NAME_ALIASES = 'name-aliases';
     public const TAB_FILES_LIST = 'files-list';
+    public const TAB_FOLDERS_LIST = 'folders-list';
     public const DEFAULT_TAB = self::TAB_INDEX_STATUS;
+
+    public const KEY_FILES = 'files';
+    public const KEY_FOLDERS = 'folders';
 
     /**
      * @var FolderInfo[]
@@ -65,14 +72,14 @@ class Library
 
     public function getURLFilesList(array $params=array()) : string
     {
-        $params['tab'] = self::TAB_FILES_LIST;
+        $params[self::REQUEST_VAR_TAB] = self::TAB_FILES_LIST;
 
         return $this->getURL($params);
     }
 
     public function getURLCreateIndex(array $params=array()) : string
     {
-        $params['tab'] = self::TAB_INDEX_STATUS;
+        $params[self::REQUEST_VAR_TAB] = self::TAB_INDEX_STATUS;
         $params['create-index'] = 'yes';
 
         return $this->getURL($params);
@@ -80,7 +87,7 @@ class Library
 
     public function getURLClearCache(array $params=array()) : string
     {
-        $params['tab'] = self::TAB_INDEX_STATUS;
+        $params[self::REQUEST_VAR_TAB] = self::TAB_INDEX_STATUS;
         $params['clear-cache'] = 'yes';
 
         return $this->getURL($params);
@@ -88,14 +95,14 @@ class Library
 
     public function getURL(array $params=array()) : string
     {
-        $params['page'] = 'library';
+        $params[Manager::REQUEST_PARAM_PAGE] = 'library';
 
-        return '?'.http_build_query($params);
+        return Manager::getInstance()->getURL($params);
     }
 
     public function getURLNameAliases(array $params=array()) : string
     {
-        $params['tab'] = self::TAB_NAME_ALIASES;
+        $params[self::REQUEST_VAR_TAB] = self::TAB_NAME_ALIASES;
 
         return $this->getURL($params);
     }
@@ -142,9 +149,20 @@ class Library
 
         $data = $this->cacheFile->parse();
 
-        foreach($data as $def)
+        if(isset($data[self::KEY_FILES]))
         {
-            $this->registerFile(LibraryFile::createFromArray($def));
+            foreach ($data[self::KEY_FILES] as $def)
+            {
+                $this->registerFile(LibraryFile::createFromArray($def));
+            }
+        }
+
+        if(isset($data[self::KEY_FOLDERS]))
+        {
+            foreach ($data[self::KEY_FOLDERS] as $def)
+            {
+                $this->registerFolder(LibrarySubfolder::createFromArray($def));
+            }
         }
 
         return;
@@ -153,6 +171,7 @@ class Library
     public function createIndex() : void
     {
         $this->files = array();
+        $this->folders = array();
 
         foreach($this->paths as $path)
         {
@@ -166,11 +185,19 @@ class Library
 
     private function writeCache() : void
     {
-        $data = array();
+        $data = array(
+            self::KEY_FILES => array(),
+            self::KEY_FOLDERS => array()
+        );
 
         foreach($this->files as $file)
         {
-            $data[] = $file->toArray();
+            $data[self::KEY_FILES][] = $file->toArray();
+        }
+
+        foreach ($this->folders as $folder)
+        {
+            $data[self::KEY_FOLDERS][] = $folder->toArray();
         }
 
         $this->cacheFile->putData($data, false);
@@ -188,12 +215,24 @@ class Library
         {
             $this->indexFile(FileInfo::factory($file));
         }
+
+        $subfolders = FileHelper::getSubfolders($path);
+
+        foreach($subfolders as $subfolder)
+        {
+            $this->indexSubfolder(FolderInfo::factory($path.'/'.$subfolder));
+        }
     }
 
     /**
      * @var LibraryFile[]|NULL
      */
     private ?array $files = null;
+
+    /**
+     * @var LibrarySubfolder[]
+     */
+    private array $folders = array();
 
     /**
      * @var array<int,array<int,array<int,LibraryFile>>>
@@ -214,6 +253,29 @@ class Library
             $normalized['season'],
             $normalized['episode']
         ));
+    }
+
+    private array $excludeFolders = array(
+        '.sync',
+        '.svn'
+    );
+
+    private function indexSubfolder(FolderInfo $subfolder) : void
+    {
+        if(in_array($subfolder->getName(), $this->excludeFolders, true)) {
+            return;
+        }
+
+        $this->registerFolder(new LibrarySubfolder(
+            $subfolder,
+            $subfolder->getName(),
+            $subfolder->getModifiedDate()
+        ));
+    }
+
+    private function registerFolder(LibrarySubfolder $folder) : void
+    {
+        $this->folders[$folder->getName()] = $folder;
     }
 
     private function registerFile(LibraryFile $info) : void
@@ -238,7 +300,7 @@ class Library
     {
         $this->load();
 
-        $normalized = $this->normalizeName($seriesName);
+        $normalized = self::normalizeName($seriesName);
 
         if(!isset($this->seasonIndex[$seasonNr][$episodeNr])) {
             return null;
@@ -262,7 +324,7 @@ class Library
         return $this->load();
     }
 
-    private function normalizeName(string $name) : string
+    public static function normalizeName(string $name) : string
     {
         $name = mb_strtolower($name);
 
@@ -304,7 +366,7 @@ class Library
      */
     public function parseName(string $name) : ?array
     {
-        $name = $this->normalizeName($name).' END';
+        $name = self::normalizeName($name).' END';
 
         preg_match('/ s[ ]*([0-9]{1,2})[ ]*e[ ]*([0-9]{1,2})[ ]/U', $name, $matches);
 
@@ -366,10 +428,19 @@ class Library
     }
 
     /**
+     * @var string[]|null
+     */
+    private ?array $cachedSeriesNames = null;
+
+    /**
      * @return string[]
      */
     public function getSeriesNames() : array
     {
+        if(isset($this->cachedSeriesNames)) {
+            return $this->cachedSeriesNames;
+        }
+
         $files = $this->getFiles();
         $names = array();
 
@@ -380,7 +451,9 @@ class Library
 
         ksort($names);
 
-        return array_keys($names);
+        $this->cachedSeriesNames = array_keys($names);
+
+        return $this->cachedSeriesNames;
     }
 
     public function deleteNameAlias(string $name) : self
@@ -389,5 +462,43 @@ class Library
         unset($aliases[$name]);
         $this->aliasesFile->putData($aliases, true);
         return $this;
+    }
+
+    /**
+     * @return LibrarySubfolder[]
+     */
+    public function getAvailableFolders(string $sortBy='name', string $sortDir='asc') : array
+    {
+        $this->loadCache();
+
+        $result = $this->folders;
+
+        usort($result, static function(LibrarySubfolder $a, LibrarySubfolder $b) use($sortBy, $sortDir) : int
+        {
+            $dir = 1;
+            if($sortDir === 'desc') {
+                $dir = -1;
+            }
+
+            if($sortBy === 'date')
+            {
+                $dateA = $a->getDate();
+                $dateB = $b->getDate();
+
+                if($dateA > $dateB) {
+                    return -1 * $dir;
+                }
+
+                if($dateA < $dateB) {
+                    return $dir;
+                }
+
+                return 0;
+            }
+
+            return strnatcasecmp($a->getName(), $b->getName()) * $dir;
+        });
+
+        return $result;
     }
 }
