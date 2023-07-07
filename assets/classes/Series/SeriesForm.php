@@ -117,7 +117,16 @@ class SeriesForm
         <script src="js/add.js"></script>
         <script>
             $('document').ready(function () {
-                $('#f-<?php echo self::SETTING_NAME ?>').focus();
+                <?php
+                if(!isset($this->series))
+                {
+                    ?>
+                    $('#f-<?php echo self::SETTING_NAME ?>').focus();
+                    <?php
+                }
+                ?>
+
+                UpdateSearchLinks();
             });
         </script>
         <h3><?php echo $this->title ?></h3>
