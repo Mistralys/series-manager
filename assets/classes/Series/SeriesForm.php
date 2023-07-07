@@ -9,6 +9,7 @@ use AppUtils\Request;
 use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\Series\Series;
 use Mistralys\SeriesManager\SeriesCollection;
+use function AppLocalize\pt;
 
 class SeriesForm
 {
@@ -132,14 +133,14 @@ class SeriesForm
         <h3><?php echo $this->title ?></h3>
         <form method="post">
             <div class="form-group">
-                <label for="f-<?php echo self::SETTING_NAME ?>">Name</label>
+                <label for="f-<?php echo self::SETTING_NAME ?>"><?php pt('Name') ?></label>
                 <input type="text" name="<?php echo self::SETTING_NAME ?>" class="form-control"
                        id="f-<?php echo self::SETTING_NAME ?>" placeholder="Game of Thrones"
                        onkeyup="UpdateSearchLinks()" value="<?php echo $this->values[self::SETTING_NAME] ?>"/>
                 <p class="help-block" id="searchlinks"></p>
             </div>
             <div class="form-group">
-                <label for="f-<?php echo self::SETTING_IMDB_ID ?>">IMDB ID</label>
+                <label for="f-<?php echo self::SETTING_IMDB_ID ?>"><?php pt('%1$s ID', 'IMDB') ?></label>
                 <input type="text" name="<?php echo self::SETTING_IMDB_ID ?>" class="form-control"
                        id="f-<?php echo self::SETTING_IMDB_ID ?>" placeholder="tt12345678"
                        value="<?php echo $this->values[self::SETTING_IMDB_ID] ?>"/>
@@ -148,16 +149,16 @@ class SeriesForm
                 </p>
             </div>
             <div class="form-group">
-                <label for="f-<?php echo self::SETTING_TVDB_ID ?>">TVDB ID</label>
+                <label for="f-<?php echo self::SETTING_TVDB_ID ?>"><?php pt('%1$s ID', 'TVDB') ?></label>
                 <input type="text" name="<?php echo self::SETTING_TVDB_ID ?>" class="form-control"
                        id="f-<?php echo self::SETTING_TVDB_ID ?>" placeholder="123456"
                        value="<?php echo $this->values[self::SETTING_TVDB_ID] ?>"/>
                 <p class="help-block">
-                    Shown on the detail page of the series.
+                    <?php pt('Shown on the detail page of the series.') ?>
                 </p>
             </div>
             <div class="form-group">
-                <label for="f-<?php echo self::SETTING_TVDB_ALIAS ?>">TVDB Alias</label>
+                <label for="f-<?php echo self::SETTING_TVDB_ALIAS ?>"><?php pt('%1$s Alias', 'TVDB') ?></label>
                 <input type="text" name="<?php echo self::SETTING_TVDB_ALIAS ?>" class="form-control"
                        id="f-<?php echo self::SETTING_TVDB_ALIAS ?>" placeholder="game-of-thrones"
                        value="<?php echo $this->values[self::SETTING_TVDB_ALIAS] ?>"/>
@@ -174,10 +175,10 @@ class SeriesForm
                 <input type="hidden" name="id" value="<?php echo $this->series->getIMDBID() ?>"/>
                 <button type="submit" class="btn btn-primary">
                     <i class="glyphicon glyphicon-save"></i>
-                    Save now
+                    <?php pt('Save now'); ?>
                 </button>
                 <a href="./" class="btn btn-default">
-                    Cancel
+                    <?php pt('Cancel') ?>
                 </a>
                 <?php
             }
@@ -186,10 +187,10 @@ class SeriesForm
                 ?>
                 <button type="submit" class="btn btn-primary">
                     <i class="glyphicon glyphicon-plus"></i>
-                    Add series
+                    <?php pt('Add series') ?>
                 </button>
                 <a href="./" class="btn btn-default">
-                    Cancel
+                    <?php pt('Cancel') ?>
                 </a>
                 <?php
             }
