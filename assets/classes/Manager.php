@@ -6,11 +6,14 @@ namespace Mistralys\SeriesManager;
 
 use Adrenth\Thetvdb\Client;
 use AppUtils\FileHelper\JSONFile;
+use AppUtils\Request;
 use Mistralys\SeriesManager\Series\Series;
 use Mistralys\SeriesManager\SeriesCollection;
 
 class Manager
 {
+    public const REQUEST_PARAM_PAGE = 'page';
+
     protected SeriesCollection $series;
     protected string $page = 'list';
     protected static ?Manager $instance = null;
@@ -63,7 +66,7 @@ class Manager
 
     public function start() : void
     {
-        $page = $_REQUEST['page'] ?? $this->page;
+        $page = $_REQUEST[self::REQUEST_PARAM_PAGE] ?? $this->page;
 
         if (!$this->checkLogin())
         {
@@ -262,5 +265,16 @@ class Manager
         }
 
         return $result;
+    }
+
+    public function getURLAdd(array $params=array()) : string
+    {
+        $params[self::REQUEST_PARAM_PAGE] = 'add';
+        return '?'.http_build_query($params);
+    }
+
+    public function getURL(array $params=array()) : string
+    {
+        return '?'.http_build_query($params);
     }
 }
