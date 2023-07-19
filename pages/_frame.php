@@ -13,8 +13,9 @@ $manager = Manager::getInstance();
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Series</title>
+    <title><?php echo Manager::getName() ?></title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
     <script src="js/jquery-1.11.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </head>
@@ -28,7 +29,7 @@ $manager = Manager::getInstance();
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="./">Series Manager</a>
+          <a class="navbar-brand" href="./"><?php echo Manager::getName() ?></a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -59,7 +60,10 @@ $manager = Manager::getInstance();
         <br>
         <hr>
         <p>
-            Series Manager v<?php echo $manager->getVersion() ?>
+            <?php echo Manager::getName() ?>
+            <a href="https://github.com/Mistralys/series-manager/releases">
+                v<?php echo $manager->getVersion() ?>
+            </a>
         </p>
         <br>
         <br> 
