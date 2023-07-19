@@ -1,0 +1,8 @@
+.table.table-properties TH{
+    white-space: nowrap;
+    text-align: right;
+}
+
+.tab-pane{
+    padding-top: 2rem;
+}
