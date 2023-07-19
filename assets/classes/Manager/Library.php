@@ -329,12 +329,6 @@ class Library
     {
         $name = mb_strtolower($name);
 
-        if(strpos($name, ' - ') !== false) {
-            $parts = explode(' - ', $name);
-            array_shift($parts);
-            $name = implode(' - ', $parts);
-        }
-
         $replaces = array(
             '.' => ' ',
             '-' => ' ',
@@ -354,11 +348,68 @@ class Library
 
         $name = str_replace(array_keys($replaces), array_values($replaces), $name);
 
-        while(strpos($name, '  ') !== false) {
-            $name = str_replace('  ', ' ', $name);
+        $episodes = self::detectEpisodeNumbers($name);
+
+        foreach($episodes as $episode)
+        {
+            $name = str_replace($episode['matchedText'], ' '.$episode['normalized'].' ', $name);
         }
 
-        return trim($name);
+        $name = self::removeExtraneousSpaces($name);
+
+        $words = explode(' ', $name);
+
+        // Fix for single letter words, to collapse them into a single word.
+        $keep = array();
+        foreach ($words as $idx => $word)
+        {
+            $next = $words[$idx + 1] ?? null;
+
+            if(!($next && strlen($word) === 1 && strlen($next) === 1))
+            {
+                $word .= ' ';
+            }
+
+            $keep[] = $word;
+        }
+
+        return trim(implode('', $keep));
+    }
+
+    public static function removeExtraneousSpaces(string $subject) : string
+    {
+        while(strpos($subject, '  ') !== false) {
+            $subject = str_replace('  ', ' ', $subject);
+        }
+
+        return $subject;
+    }
+
+    public static function detectEpisodeNumbers(string $subject) : array
+    {
+        preg_match_all('/ s[ ]*([0-9]{1,2})[ ]*e[ ]*([0-9]{1,2})[ ]/U', $subject, $matches);
+
+        if(empty($matches[0]))
+        {
+            return array();
+        }
+
+        $result = array();
+        foreach($matches[0] as $idx => $matchedText)
+        {
+            $result[] = array(
+                'matchedText' => trim($matchedText),
+                'season' => (int)$matches[1][$idx],
+                'episode' => (int)$matches[2][$idx],
+                'normalized' => sprintf(
+                    's%02de%02d',
+                    (int)$matches[1][$idx],
+                    (int)$matches[2][$idx]
+                )
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -369,14 +420,61 @@ class Library
     {
         $name = self::normalizeName($name).' END';
 
-        preg_match('/ s[ ]*([0-9]{1,2})[ ]*e[ ]*([0-9]{1,2})[ ]/U', $name, $matches);
+        $episodes = self::detectEpisodeNumbers($name);
 
-        if(empty($matches[0])) {
+        if(empty($episodes)) {
             return null;
         }
 
-        $parts = explode($matches[0], $name);
+        $episodeInfo = $episodes[0];
+
+        foreach($episodes as $episode)
+        {
+            $name = str_replace($episode['matchedText'], '__EPISODE__', $name);
+        }
+
+        // Remove any years from the name
+        $years = self::detectYears($name);
+        foreach($years as $year)
+        {
+            $name = str_replace((string)$year, ' ', $name);
+        }
+
+        $name = self::removeExtraneousSpaces($name);
+
+        // Split the name by all episode markers
+        $parts = explode('__EPISODE__', $name);
+
+        // The first part is the name
         $name = trim((string)array_shift($parts));
+
+        $words = explode(' ', $name);
+        $map = array();
+        $max = 0;
+        foreach($words as $word)
+        {
+            if(!isset($map[$word])) {
+                $map[$word] = 0;
+            }
+
+            $map[$word]++;
+
+            if($map[$word] > $max) {
+                $max = $map[$word];
+            }
+        }
+
+        if($max > 1) {
+            $keep = array();
+            foreach($map as $word => $count)
+            {
+                if($count > 1) {
+                    $keep[] = $word;
+                }
+            }
+
+            $name = implode(' ', $keep);
+        }
 
         $parts = ConvertHelper::explodeTrim(' ', $name);
 
@@ -391,9 +489,21 @@ class Library
 
         return array(
             'name' => $this->getNameAlias(implode(' ', $keep)),
-            'season' => (int)$matches[1],
-            'episode' => (int)$matches[2]
+            'years' => $years,
+            'season' => $episodeInfo['season'],
+            'episode' => $episodeInfo['episode']
         );
+    }
+
+    /**
+     * @param string $subject
+     * @return int[]
+     */
+    public static function detectYears(string $subject) : array
+    {
+        preg_match_all('/(19|20)\d\d/', $subject, $matches);
+
+        return array_map('intval', array_unique($matches[0]));
     }
 
     public function getNameAlias(string $name) : string
