@@ -6,26 +6,46 @@ information.
 
 ## Requirements
 
-- Webserver with PHP 7.4+
+- Local webserver with PHP 7.4+
 - [Composer][]
 - [TheTVDB][] API account
 
+> NOTE: The tool is not intended to be used on a public server.
+> It is meant to be used locally, e.g. on a Raspberry Pi, without
+> access from the outside. It has not been tested for security.
+
 ## Setup
 
-1. Run `composer install`.
-2. Copy `config-local.dist.php` to `config-local.php`.
-3. Edit the configuration settings in the file.
-4. Optional: Add custom search links (see below).
-5. Open the project folder in a browser via the webserver.
+1. Create an account for an API key on [TheTVDB][].
+2. Clone the project locally.
+3. Run `composer install`.
+4. Copy `config-local.dist.php` to `config-local.php`.
+5. Edit the configuration settings in the file.
+6. Optional: Add custom search links (see below).
+7. Open the project folder in a browser via the webserver.
+8. Log in with the password set in the configuration.
+
+## Quick start
+
+Once you have set up the project, you can start adding series
+via the "Add new" menu. Simply fill in the required information,
+and it will be added to the overview.
+
+After adding a new series, you can fetch data from TheTVDB by
+going into the series' detail view and clicking the "Fetch data"
+button. The available seasons and episodes will become available.
+
+In the overview, you can keep track of your watching progress
+by entering the season and episode number you have watched.
 
 ## Local files library
 
 ### Indexing files
 
 Whether episodes are available can be determined automatically
-if the video files are present locally. The library handles this,
-by indexing all files and cross-referencing them with the series
-by name.
+if the video files are present locally or in a mounted network
+storage or NAS. The library handles this by indexing all files 
+and cross-referencing them with the series by name.
 
 > Indexing is resource heavy, which is why it must be done manually.
 > Whenever you add new videos, remember to update the index in the
@@ -39,18 +59,19 @@ missing.
 
 The library extracts the name like this:
 
-1. Find the episode info, e.g. `S01E05`.
-2. Use everything before this as the name.
+1. Normalize the file name to remove special characters.
+2. Find the episode marker in the name, e.g. `S01E05`.
+3. Use everything before this as the name.
 
 ```
 Game.Of.Thrones.S01E05.This.Day.All.Gods.Die.mp4
-                ^Episode info
+                ^Episode marker
 ```
 
-This example will use the name `game of thrones`.
+This example will give `game of thrones` as result.
 
-The automatically detected name can be adjusted in the Library 
-UI in the "Name aliases" tab.
+To fix names that were not detected correctly, the auto-detected 
+name can be adjusted in the Library UI in the "Name aliases" tab.
 
 Example:
 
