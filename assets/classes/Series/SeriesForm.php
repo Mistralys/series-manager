@@ -32,6 +32,7 @@ class SeriesForm
         self::SETTING_IMDB_ID => '',
         self::SETTING_TVDB_ALIAS => ''
     );
+    private bool $titleEnabled = true;
 
     public function __construct(?Series $series)
     {
@@ -130,7 +131,13 @@ class SeriesForm
                 UpdateSearchLinks();
             });
         </script>
-        <h3><?php echo $this->title ?></h3>
+        <?php
+        if($this->titleEnabled) {
+            ?>
+            <h3><?php echo $this->title ?></h3>
+            <?php
+        }
+        ?>
         <form method="post">
             <div class="form-group">
                 <label for="f-<?php echo self::SETTING_NAME ?>"><?php pt('Name') ?></label>
@@ -198,5 +205,11 @@ class SeriesForm
         </form>
         <?php
         return OutputBuffering::get();
+    }
+
+    public function setTitleEnabled(bool $enabled) : self
+    {
+        $this->titleEnabled = $enabled;
+        return $this;
     }
 }
