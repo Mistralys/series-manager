@@ -46,6 +46,20 @@ final class IndexingTests extends SeriesManagerSuite
                 'expected' => 'dcs legends of tomorrow',
                 'season' => 2,
                 'episode' => 2
+            ),
+            array(
+                'label' => 'With year in parentheses before the episode number',
+                'file' => 'Marvel\'s Agents of S.H.I.E.L.D. (2013) - S01E01 - Pilot',
+                'expected' => 'marvels agents of shield',
+                'season' => 1,
+                'episode' => 1
+            ),
+            array(
+                'label' => 'Doubled name',
+                'file' => 'Game.of.Thrones.S01.1080p.WEB.DD5.1.H.264 - Game.of.Thrones.S01E01.Winter.Is.Coming.1080p.WEB.DD5.1.H.264',
+                'expected' => 'game of thrones',
+                'season' => 1,
+                'episode' => 1
             )
         );
 
@@ -55,10 +69,10 @@ final class IndexingTests extends SeriesManagerSuite
         {
             $result = $lib->parseName($test['file']);
 
-            $this->assertNotNull($result);
-            $this->assertSame($test['expected'], $result['name']);
-            $this->assertSame($test['season'], $result['season']);
-            $this->assertSame($test['episode'], $result['episode']);
+            $this->assertNotNull($result, $test['label']);
+            $this->assertSame($test['expected'], $result['name'], $test['label']);
+            $this->assertSame($test['season'], $result['season'], $test['label']);
+            $this->assertSame($test['episode'], $result['episode'], $test['label']);
         }
     }
 
