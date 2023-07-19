@@ -7,8 +7,10 @@ namespace Mistralys\SeriesManager;
 use Adrenth\Thetvdb\Client;
 use AppUtils\FileHelper\JSONFile;
 use AppUtils\Request;
+use Mistralys\ChangelogParser\ChangelogParser;
 use Mistralys\SeriesManager\Series\Series;
 use Mistralys\SeriesManager\SeriesCollection;
+use function AppLocalize\t;
 
 class Manager
 {
@@ -18,7 +20,7 @@ class Manager
     protected string $page = 'list';
     protected static ?Manager $instance = null;
     private bool $loggedIn = false;
-    protected string $version;
+    protected string $version = '0.0';
 
     /**
      * @var array<string,string>
@@ -44,9 +46,25 @@ class Manager
     protected function __construct()
     {
         $this->series = new SeriesCollection();
-        $this->version = file_get_contents(APP_ROOT . '/version.txt');
+
+        $changelogFile = __DIR__.'/../../changelog.md';
+        $versionFile = __DIR__.'/../../version.txt';
+
+        if(filemtime($changelogFile) > filemtime($versionFile)) {
+            $version = ChangelogParser::parseMarkdownFile($changelogFile)->getLatestVersion();
+            if($version !== null) {
+                file_put_contents($versionFile, $version->getNumber());
+            }
+        }
+
+        $this->version = file_get_contents($versionFile);
 
         session_start();
+    }
+
+    public static function getName() : string
+    {
+        return t('Series Manager');
     }
 
     public function getVersion() : string
