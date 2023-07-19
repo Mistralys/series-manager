@@ -415,4 +415,18 @@ class Series
 
         return array();
     }
+
+    public function isComplete() : bool
+    {
+        $seasons = $this->getSeasons();
+
+        foreach($seasons as $season)
+        {
+            if(!$season->isComplete()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

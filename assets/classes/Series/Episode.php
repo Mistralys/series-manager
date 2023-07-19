@@ -134,4 +134,9 @@ class Episode
             $this->getNumber()
         );
     }
+
+    public function isComplete() : bool
+    {
+        return $this->findInLibrary() !== null;
+    }
 }

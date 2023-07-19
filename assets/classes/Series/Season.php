@@ -64,4 +64,18 @@ class Season
     {
         return count($this->getEpisodes());
     }
+
+    public function isComplete() : bool
+    {
+        $episodes = $this->getEpisodes();
+
+        foreach($episodes as $episode)
+        {
+            if(!$episode->isComplete()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
