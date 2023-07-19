@@ -1,3 +1,9 @@
+## v2.1.1 - Small enhancements
+- UI: Added the "Complete" status in the overview.
+- UI: Added IMDB and TvDB links in the edit screen.
+- UI: Added tabs to the edit screen.
+- Core: The `version.txt` is now updated automatically.
+
 ## v2.1.0 - Library update
 - Library: Added folders indexing.
 - Library: Added folder list with links to known series.
