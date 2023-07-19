@@ -123,7 +123,7 @@ if(empty($items)) {
     <p>
         <button name="update" type="submit" class="btn btn-primary" value="yes">
             <i class="glyphicon glyphicon-edit"></i>
-            <?php pt('Save positions') ?>
+            <?php pt('Save progress') ?>
         </button>
     </p>
 </form>
