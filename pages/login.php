@@ -6,6 +6,8 @@ namespace Mistralys\SeriesManager\Pages;
 
 use Mistralys\SeriesManager\FormHandler;
 use Mistralys\SeriesManager\Manager;
+use function AppLocalize\pt;
+use function AppLocalize\t;
 
 $manager = Manager::getInstance();
 
@@ -21,11 +23,11 @@ if($manager->isLoggedIn())
 
     ?>
         <p>
-            You are currently logged in.
+            <?php pt('You are currently logged in.') ?>
         </p>
         <p>
             <a class="btn btn-primary" href="?page=login&amp;logout=yes">
-                Log out
+                <?php pt('Log out') ?>
             </a>
         </p>
     <?php
@@ -36,14 +38,14 @@ $formHandler = new FormHandler('seriesmanager-login');
 $form = $formHandler->getForm();
 
 $el = $form->addPassword('password');
-$el->setLabel('Password');
+$el->setLabel(t('Password'));
 $el->addFilter('trim');
 $el->addClass('form-control');
-$el->addRuleCallback('Invalid password.', array($manager, 'isPasswordValid'));
+$el->addRuleCallback(t('Invalid password.'), array($manager, 'isPasswordValid'));
 
 $btn = $form->addButton('save');
 $btn->setAttribute('type', 'submit');
-$btn->setContent('Sign in');
+$btn->setContent(t('Sign in'));
 $btn->addClass('btn btn-primary');
 
 if($formHandler->isValid())
@@ -57,8 +59,8 @@ if($formHandler->isValid())
 }
 
 ?>
-<h3>Login</h3>
+<h3><?php pt('Login') ?></h3>
 <p>
-	Please log in with the configured password.
+	<?php pt('Please log in with the configured password.') ?>
 </p>
 <?php $formHandler->display() ?>
