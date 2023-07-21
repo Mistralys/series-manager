@@ -2,6 +2,11 @@
 - Core: Prepared to make the project public.
 - Core: Added license file.
 - Core: Added some more documentation in the readme.
+- Core: Added localization capabilities.
+- UI: Added possibility to favorite series.
+- UI: Added archiving of series (viewable in a separate tab).
+- UI: Added language switcher.
+- UI: Added dark mode switching.
 
 ## v2.1.1 - Small enhancements
 - UI: Added the "Complete" status in the overview.
