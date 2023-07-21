@@ -15,6 +15,7 @@ class Series
     public const KEY_TVDB_ID = 'tvdbID';
     public const KEY_IMDB_ID = 'imdbID';
     public const KEY_NAME = 'name';
+    public const KEY_ARCHIVED = 'archived';
     public const INFO_STATUS = 'status';
     public const INFO_GENRE = 'genre';
     public const INFO_NETWORK = 'network';
@@ -53,6 +54,11 @@ class Series
         }
         
         return $name;
+    }
+
+    public function isArchived() : bool
+    {
+        return $this->getKey(self::KEY_ARCHIVED) === true;
     }
     
     public function getStatus() : string
@@ -287,7 +293,19 @@ class Series
     {
         return $this->setKey(self::KEY_NAME, $name);
     }
-    
+
+    public function setArchived(bool $archived) : self
+    {
+        $this->setKey(self::KEY_ARCHIVED, $archived);
+        return $this;
+    }
+
+    public function save() : self
+    {
+        Manager::getInstance()->getSeries()->save();
+        return $this;
+    }
+
     public function setTVDBAlias(string $id) : bool
     {
         return $this->setKey(self::KEY_TVDB_ALIAS, $id);
@@ -373,6 +391,13 @@ class Series
     public function getURLDelete(array $params=array()) : string
     {
         $params[Manager::REQUEST_PARAM_PAGE] = 'delete';
+
+        return $this->getURL($params);
+    }
+
+    public function getURLArchive(array $params=array()) : string
+    {
+        $params[Manager::REQUEST_PARAM_PAGE] = 'archive';
 
         return $this->getURL($params);
     }
