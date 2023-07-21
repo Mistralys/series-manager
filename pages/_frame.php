@@ -16,12 +16,25 @@ $manager = Manager::getInstance();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo Manager::getName() ?></title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <?php
+    if(Manager::isDarkMode())
+    {
+        ?>
+        <link href="css/bootswatch.min.css" rel="stylesheet">
+        <?php
+    }
+    else
+    {
+        ?>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <?php
+    }
+    ?>
     <link href="css/main.css" rel="stylesheet">
     <script src="js/jquery-1.11.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </head>
-  <body>
+  <body class="<?php if(Manager::isDarkMode()) { echo 'dark-mode'; } ?>">
     <nav class="navbar navbar-inverse">
       <div class="container">
         <div class="navbar-header">
@@ -88,6 +101,8 @@ $manager = Manager::getInstance();
                 }
             }
             ?>
+            |
+            <a href="?toggleDarkMode=yes"><?php pt('Toggle dark mode') ?></a>
         </p>
         <br>
         <br> 

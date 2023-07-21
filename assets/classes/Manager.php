@@ -16,6 +16,7 @@ use function AppLocalize\t;
 class Manager
 {
     public const REQUEST_PARAM_PAGE = 'page';
+    const SESSION_DARK_MODE = 'darkmode';
 
     protected SeriesCollection $series;
     protected string $page = 'list';
@@ -27,6 +28,7 @@ class Manager
      * @var array<string,string>|NULL
      */
     protected ?array $pages = null;
+    private Request $request;
 
     public static function getInstance() : Manager
     {
@@ -41,6 +43,7 @@ class Manager
     protected function __construct()
     {
         $this->series = new SeriesCollection();
+        $this->request = Request::getInstance();
 
         $changelogFile = __DIR__.'/../../changelog.md';
         $versionFile = __DIR__.'/../../version.txt';
@@ -55,6 +58,11 @@ class Manager
         $this->version = file_get_contents($versionFile);
 
         session_start();
+    }
+
+    public static function isDarkMode() : bool
+    {
+        return !empty($_SESSION[self::SESSION_DARK_MODE]) && $_SESSION[self::SESSION_DARK_MODE] === true;
     }
 
     public static function getName() : string
@@ -72,6 +80,7 @@ class Manager
         if(!isset($this->pages)) {
             $this->pages = array(
                 'list' => t('Overview'),
+                'archived' => t('Archive'),
                 'add' => t('Add new'),
                 'fetch' => t('Fetch data'),
                 'library' => t('Library'),
@@ -91,6 +100,7 @@ class Manager
         self::initLocalization();
 
         $this->selectLocale();
+        $this->checkDarkModeToggle();
 
         $page = $_REQUEST[self::REQUEST_PARAM_PAGE] ?? $this->page;
 
@@ -108,7 +118,10 @@ class Manager
         $editPages = array(
             'delete',
             'edit',
-            'archive'
+            'archive',
+            'unarchive',
+            'favorite',
+            'unfavorite'
         );
 
         if (in_array($page, $editPages, true) && $this->getSelectedID())
@@ -339,5 +352,24 @@ class Manager
             Localization::selectAppLocale($locale);
             $_SESSION['locale'] = $locale;
         }
+    }
+
+    private function checkDarkModeToggle() : void
+    {
+        if(!$this->request->getBool('toggleDarkMode'))
+        {
+            return;
+        }
+
+        Manager::getInstance()->setDarkMode(!self::isDarkMode());
+
+        header('Location:./');
+        exit;
+    }
+
+    public function setDarkMode(bool $enabled) : self
+    {
+        $_SESSION[self::SESSION_DARK_MODE] = $enabled;
+        return $this;
     }
 }

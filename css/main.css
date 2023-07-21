@@ -6,3 +6,15 @@
 .tab-pane{
     padding-top: 2rem;
 }
+
+BODY.dark-mode TR.warning>TD{
+    background-color: #533c10;
+}
+
+BODY.dark-mode TR.warning:hover>TD{
+    background-color: #78540e;
+}
+
+BODY.dark-mode .form-control{
+    background-color:#303030;
+}
