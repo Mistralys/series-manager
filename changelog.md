@@ -1,3 +1,8 @@
+## v1.1.2 - Public availability release
+- Core: Prepared to make the project public.
+- Core: Added license file.
+- Core: Added some more documentation in the readme.
+
 ## v2.1.1 - Small enhancements
 - UI: Added the "Complete" status in the overview.
 - UI: Added IMDB and TvDB links in the edit screen.
