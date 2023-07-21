@@ -110,6 +110,9 @@ if(empty($items)) {
                         </div>
                     </td>
                     <td>
+                        <a href="<?php echo $item->getURLArchive() ?>" class="btn btn-default">
+                            <i class="glyphicon glyphicon-bookmark"></i>
+                        </a>
                         <a href="<?php echo $item->getURLDelete() ?>" class="btn btn-danger">
                             <i class="glyphicon glyphicon-remove-sign"></i>
                         </a>
