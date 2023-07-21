@@ -12,6 +12,7 @@ use Mistralys\SeriesManager\SeriesCollection;
 use Mistralys\SeriesManager\UI;
 use function AppLocalize\pt;
 use function AppLocalize\ptex;
+use function AppLocalize\pts;
 use function AppLocalize\t;
 
 class SeriesList
@@ -121,7 +122,7 @@ class SeriesList
             <td style="text-align: right"><?php pt('Episodes') ?></td>
             <td style="text-align: center"><?php pt('Complete?') ?></td>
             <td><?php pt('Links') ?></td>
-            <td><?php pt('Last Downloaded') ?></td>
+            <td><?php pt('Last watched') ?></td>
             <td></td>
         </tr>
         </thead>
@@ -139,7 +140,11 @@ class SeriesList
                     if($item->isFavorite())
                     {
                         ?>
-                        <a href="<?php echo $item->getURLUnfavorite() ?>" style="color:#ffdc00">
+                        <a  href="<?php echo $item->getURLUnfavorite() ?>"
+                            style="color:#ffdc00"
+                            data-toggle="tooltip"
+                            title="<?php pts('Removes the favorite flag from the series.') ?>"
+                        >
                             <i class="glyphicon glyphicon-star"></i>
                         </a>
                         <?php
@@ -147,7 +152,11 @@ class SeriesList
                     else
                     {
                         ?>
-                        <a href="<?php echo $item->getURLFavorite() ?>" class="text-muted">
+                        <a  href="<?php echo $item->getURLFavorite() ?>"
+                            class="text-muted"
+                            data-toggle="tooltip"
+                            title="<?php pts('Marks the series as a favorite.') ?>"
+                        >
                             <i class="glyphicon glyphicon-star-empty"></i>
                         </a>
                         <?php
@@ -207,21 +216,33 @@ class SeriesList
                     if($item->isArchived())
                     {
                         ?>
-                        <a href="<?php echo $item->getURLUnarchive() ?>" class="btn btn-default">
-                            <i class="glyphicon glyphicon-bookmark"></i>
+                        <a  href="<?php echo $item->getURLUnarchive() ?>"
+                            class="btn btn-default"
+                            data-toggle="tooltip"
+                            title="<?php pts('Unarchives the series.'); pts('It will be shown in the %1$s again.', t('Overview')); ?>"
+                        >
+                            <i class="glyphicon glyphicon-circle-arrow-up"></i>
                         </a>
                         <?php
                     }
                     else
                     {
                         ?>
-                        <a href="<?php echo $item->getURLArchive() ?>" class="btn btn-default">
+                        <a  href="<?php echo $item->getURLArchive() ?>"
+                            class="btn btn-default"
+                            data-toggle="tooltip"
+                            title="<?php pts('Marks the series at archived.'); pts('It will still be visible in the %1$s screen.', t('Archive')); ?>"
+                        >
                             <i class="glyphicon glyphicon-bookmark"></i>
                         </a>
                         <?php
                     }
                     ?>
-                    <a href="<?php echo $item->getURLDelete() ?>" class="btn btn-danger">
+                    <a  href="<?php echo $item->getURLDelete() ?>"
+                        class="btn btn-danger"
+                        data-toggle="tooltip"
+                        title="<?php pts('Deletes the series.'); pts('Leaves files on disk unchanged.'); ?>"
+                    >
                         <i class="glyphicon glyphicon-remove-sign"></i>
                     </a>
                 </td>
