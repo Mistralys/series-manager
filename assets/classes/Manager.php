@@ -105,14 +105,15 @@ class Manager
             $this->page = $page;
         }
 
-        if ($page === 'delete' && $this->getSelectedID())
-        {
-            $this->page = 'delete';
-        }
+        $editPages = array(
+            'delete',
+            'edit',
+            'archive'
+        );
 
-        if ($page === 'edit' && $this->getSelectedID())
+        if (in_array($page, $editPages, true) && $this->getSelectedID())
         {
-            $this->page = 'edit';
+            $this->page = $page;
         }
 
         ob_start();
