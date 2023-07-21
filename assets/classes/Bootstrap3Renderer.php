@@ -102,9 +102,13 @@ class Bootstrap3Renderer extends HTML_QuickForm2_Renderer
 
     }
 
-    public function reset()
+    public function reset() : void
     {
-
+        $this->hiddens = array();
+        $this->contents = array();
+        $this->buttons = array();
+        $this->formStart = '';
+        $this->formEnd = '';
     }
 
     public function startForm(HTML_QuickForm2_Node $form) : void
