@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mistralys\SeriesManager;
 
 use Adrenth\Thetvdb\Client;
+use AppLocalize\Localization;
 use AppUtils\FileHelper\JSONFile;
 use AppUtils\Request;
 use Mistralys\ChangelogParser\ChangelogParser;
@@ -23,15 +24,9 @@ class Manager
     protected string $version = '0.0';
 
     /**
-     * @var array<string,string>
+     * @var array<string,string>|NULL
      */
-    protected array $pages = array(
-        'list' => 'Home',
-        'add' => 'Add new',
-        'fetch' => 'Fetch data',
-        'library' => 'Library',
-        'login' => 'Login'
-    );
+    protected ?array $pages = null;
 
     public static function getInstance() : Manager
     {
@@ -74,6 +69,15 @@ class Manager
 
     public function getPages() : array
     {
+        if(!isset($this->pages)) {
+            $this->pages = array(
+                'list' => t('Overview'),
+                'add' => t('Add new'),
+                'fetch' => t('Fetch data'),
+                'library' => t('Library'),
+                'login' => t('Login')
+            );
+        }
         return $this->pages;
     }
 
@@ -84,6 +88,10 @@ class Manager
 
     public function start() : void
     {
+        self::initLocalization();
+
+        $this->selectLocale();
+
         $page = $_REQUEST[self::REQUEST_PARAM_PAGE] ?? $this->page;
 
         if (!$this->checkLogin())
@@ -91,7 +99,8 @@ class Manager
             $page = 'login';
         }
 
-        if (isset($this->pages[$page]))
+        $pages = $this->getPages();
+        if (isset($pages[$page]))
         {
             $this->page = $page;
         }
@@ -294,5 +303,40 @@ class Manager
     public function getURL(array $params=array()) : string
     {
         return '?'.http_build_query($params);
+    }
+
+    public static function initLocalization() : void
+    {
+        // add the locales we wish to manage (en_UK is always present)
+        Localization::addAppLocale('de_DE');
+        Localization::addAppLocale('fr_FR');
+
+        Localization::addSourceFolder(
+            'series-manager-classes',
+            'Series Manager',
+            'Series Manager',
+            __DIR__.'/../../localization',
+            __DIR__.'/../../'
+        )
+            ->excludeFolder('cache')
+            ->excludeFolder('css')
+            ->excludeFolder('js')
+            ->excludeFolder('fonts')
+            ->excludeFolder('data')
+            ->excludeFolder('tests')
+            ->excludeFolder('vendor');
+
+        // has to be called last after all sources and locales have been configured
+        Localization::configure(__DIR__.'/../../localization/storage.json', '');
+    }
+
+    private function selectLocale() : void
+    {
+        $locale = $_REQUEST['selectLocale'] ?? $_SESSION['locale'] ?? null;
+
+        if($locale && Localization::appLocaleExists($locale)) {
+            Localization::selectAppLocale($locale);
+            $_SESSION['locale'] = $locale;
+        }
     }
 }
