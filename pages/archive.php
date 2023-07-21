@@ -6,9 +6,10 @@ namespace Mistralys\SeriesManager\Pages;
 
 use Mistralys\SeriesManager\Manager;
 
-$selected = Manager::getInstance()->getSelected();
-
-$selected->setArchived(true)->save();
+Manager::getInstance()
+    ->getSelected()
+    ->setArchived(true)
+    ->save();
 
 header('Location:./');
 exit;
