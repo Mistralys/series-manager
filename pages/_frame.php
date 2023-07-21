@@ -33,6 +33,12 @@ $manager = Manager::getInstance();
     <link href="css/main.css" rel="stylesheet">
     <script src="js/jquery-1.11.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
   </head>
   <body class="<?php if(Manager::isDarkMode()) { echo 'dark-mode'; } ?>">
     <nav class="navbar navbar-inverse">
