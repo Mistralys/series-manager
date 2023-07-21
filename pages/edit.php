@@ -54,11 +54,9 @@ if($request->getBool('fetch'))
             <table class="table table-properties">
                 <tbody>
                     <tr>
-                        <th><?php pt('Status') ?></th>
                         <td><?php echo $selected->getStatus() ?></td>
                     </tr>
                     <tr>
-                        <th><?php pt('Synopsis') ?></th>
                         <td><?php echo $selected->getSynopsis() ?></td>
                     </tr>
                     <tr>
@@ -92,7 +90,7 @@ if($request->getBool('fetch'))
         </a>
         <a href="<?php echo $selected->getURLClearAndFetch() ?>" class="btn btn-default" title="<?php pt('Clears the cache and fetches fresh data.') ?>">
             <i class="glyphicon glyphicon-download"></i>
-            <?php echo htmlspecialchars(t('Clear & fetch')) ?>
+            <?php echo htmlspecialchars(t('Clear and fetch')) ?>
         </a>
     </div>
     <div role="tabpanel" class="tab-pane" id="seasons">
