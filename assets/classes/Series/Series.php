@@ -31,6 +31,7 @@ class Series
     public const INFO_EPISODE_ID = 'id';
     public const INFO_EPISODE_NAME = 'name';
     public const INFO_EPISODE_OVERVIEW = 'overview';
+    const KEY_FAVORITE = 'favorite';
 
     protected array $data;
     
@@ -402,6 +403,27 @@ class Series
         return $this->getURL($params);
     }
 
+    public function getURLUnarchive(array $params=array()) : string
+    {
+        $params[Manager::REQUEST_PARAM_PAGE] = 'unarchive';
+
+        return $this->getURL($params);
+    }
+
+    public function getURLFavorite(array $params=array()) : string
+    {
+        $params[Manager::REQUEST_PARAM_PAGE] = 'favorite';
+
+        return $this->getURL($params);
+    }
+
+    public function getURLUnfavorite(array $params=array()) : string
+    {
+        $params[Manager::REQUEST_PARAM_PAGE] = 'unfavorite';
+
+        return $this->getURL($params);
+    }
+
     public function getURLFetch(array $params=array()) : string
     {
         $params['fetch'] = 'yes';
@@ -453,5 +475,16 @@ class Series
         }
 
         return true;
+    }
+
+    public function isFavorite() : bool
+    {
+        return $this->getKey(self::KEY_FAVORITE) === true;
+    }
+
+    public function setFavorite(bool $favorite) : self
+    {
+        $this->setKey(self::KEY_FAVORITE, $favorite);
+        return $this;
     }
 }
