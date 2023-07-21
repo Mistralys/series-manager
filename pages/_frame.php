@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use AppLocalize\Localization;
 use Mistralys\SeriesManager\Manager;
+use function AppLocalize\pt;
 
 $manager = Manager::getInstance();
 
@@ -64,10 +66,31 @@ $manager = Manager::getInstance();
             <a href="https://github.com/Mistralys/series-manager/releases">
                 v<?php echo $manager->getVersion() ?>
             </a>
+            |
+            <?php pt('Interface language:') ?>
+            <?php
+            $locales = Localization::getAppLocales();
+            foreach($locales as $locale)
+            {
+                if($locale->getName() === Localization::getAppLocale()->getName())
+                {
+                    ?>
+                    <strong><?php echo strtoupper($locale->getLanguageCode()) ?></strong>
+                    <?php
+                }
+                else
+                {
+                    ?>
+                    <a href="?selectLocale=<?php echo $locale->getName() ?>" title="<?php echo $locale->getLabel() ?>">
+                        <?php echo strtoupper($locale->getLanguageCode()) ?>
+                    </a>
+                    <?php
+                }
+            }
+            ?>
         </p>
         <br>
         <br> 
-        
     </div>
   </body>
 </html>
