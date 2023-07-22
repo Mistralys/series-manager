@@ -6,10 +6,10 @@ namespace Mistralys\SeriesManager\Pages;
 
 use Mistralys\SeriesManager\Manager;
 
-Manager::getInstance()
+$manager = Manager::getInstance();
+
+$manager
     ->getSelected()
     ->setFavorite(true)
-    ->save();
-
-header('Location:./');
-exit;
+    ->save()
+    ->redirectToReturnPage();

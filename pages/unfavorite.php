@@ -9,7 +9,5 @@ use Mistralys\SeriesManager\Manager;
 Manager::getInstance()
     ->getSelected()
     ->setFavorite(false)
-    ->save();
-
-header('Location:./');
-exit;
+    ->save()
+    ->redirectToReturnPage();

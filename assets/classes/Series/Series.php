@@ -7,7 +7,8 @@ namespace Mistralys\SeriesManager\Series;
 use Adrenth\Thetvdb\Client;
 use Adrenth\Thetvdb\Model\BasicEpisode;
 use AppUtils\FileHelper\JSONFile;
-use Mistralys\SeriesManager\Manager;
+use AppUtils\OutputBuffering;
+use Mistralys\SeriesManager\Manager;use function AppLocalize\pts;
 
 class Series
 {
@@ -396,30 +397,50 @@ class Series
         return $this->getURL($params);
     }
 
-    public function getURLArchive(array $params=array()) : string
+    public function getURLArchive(?array $params=null, ?string $returnPage=null) : string
     {
+        if($params === null) {
+            $params = array();
+        }
+
         $params[Manager::REQUEST_PARAM_PAGE] = 'archive';
+        $params[Manager::REQUEST_VAR_RETURN_PAGE] = $returnPage;
 
         return $this->getURL($params);
     }
 
-    public function getURLUnarchive(array $params=array()) : string
+    public function getURLUnarchive(?array $params=null, ?string $returnPage=null) : string
     {
+        if($params === null) {
+            $params = array();
+        }
+
         $params[Manager::REQUEST_PARAM_PAGE] = 'unarchive';
+        $params[Manager::REQUEST_VAR_RETURN_PAGE] = $returnPage;
 
         return $this->getURL($params);
     }
 
-    public function getURLFavorite(array $params=array()) : string
+    public function getURLFavorite(?array $params=null, ?string $returnPage=null) : string
     {
+        if($params === null) {
+            $params = array();
+        }
+
         $params[Manager::REQUEST_PARAM_PAGE] = 'favorite';
+        $params[Manager::REQUEST_VAR_RETURN_PAGE] = $returnPage;
 
         return $this->getURL($params);
     }
 
-    public function getURLUnfavorite(array $params=array()) : string
+    public function getURLUnfavorite(?array $params=null, ?string $returnPage=null) : string
     {
+        if($params === null) {
+            $params = array();
+        }
+
         $params[Manager::REQUEST_PARAM_PAGE] = 'unfavorite';
+        $params[Manager::REQUEST_VAR_RETURN_PAGE] = $returnPage;
 
         return $this->getURL($params);
     }
@@ -486,5 +507,35 @@ class Series
     {
         $this->setKey(self::KEY_FAVORITE, $favorite);
         return $this;
+    }
+
+    public function renderFavoriteIcon() : string
+    {
+        OutputBuffering::start();
+
+        if($this->isFavorite())
+        {
+            ?>
+            <i class="glyphicon glyphicon-star" style="color:#ffdc00;font-size:80%"></i>
+            <?php
+        }
+        else
+        {
+            ?>
+            <i class="glyphicon glyphicon-star-empty text-muted" style="font-size:80%"></i>
+            <?php
+        }
+
+        return OutputBuffering::get();
+    }
+
+    /**
+     * @return never
+     */
+    public function redirectToReturnPage() : void
+    {
+        Manager::getInstance()->redirectToReturnPage(array(
+            'id' => $this->getIMDBID()
+        ));
     }
 }
