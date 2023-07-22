@@ -17,6 +17,7 @@ class Manager
 {
     public const REQUEST_PARAM_PAGE = 'page';
     const SESSION_DARK_MODE = 'darkmode';
+    const REQUEST_VAR_RETURN_PAGE = 'returnPage';
 
     protected SeriesCollection $series;
     protected string $page = 'list';
@@ -319,6 +320,24 @@ class Manager
         return '?'.http_build_query($params);
     }
 
+    /**
+     * @param array<string,string|number> $params
+     * @return never
+     */
+    public function redirectToReturnPage(array $params=array()) : void
+    {
+        $page = (string)Request::getInstance()
+            ->registerParam(self::REQUEST_VAR_RETURN_PAGE)
+            ->setAlpha()
+            ->get();
+
+        if(!empty($page)) {
+            $params['page'] = $page;
+        }
+
+        $this->redirect($this->getURL($params));
+    }
+
     public static function initLocalization() : void
     {
         // add the locales we wish to manage (en_UK is always present)
@@ -371,5 +390,15 @@ class Manager
     {
         $_SESSION[self::SESSION_DARK_MODE] = $enabled;
         return $this;
+    }
+
+    /**
+     * @param string $url
+     * @return never
+     */
+    public function redirect(string $url) : void
+    {
+        header('Location:'.$url);
+        exit;
     }
 }
