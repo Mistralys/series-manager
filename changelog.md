@@ -1,4 +1,4 @@
-## v1.1.2 - Public availability release
+## v3.0.0 - Public availability release
 - Core: Prepared to make the project public.
 - Core: Added license file.
 - Core: Added some more documentation in the readme.
@@ -6,6 +6,7 @@
 - UI: Added possibility to favorite series.
 - UI: Added archiving of series (viewable in a separate tab).
 - UI: Added language switcher.
+- UI: Added german and french translations.
 - UI: Added dark mode switching.
 
 ## v2.1.1 - Small enhancements
