@@ -231,9 +231,9 @@ class SeriesList
                         <a  href="<?php echo $item->getURLArchive() ?>"
                             class="btn btn-default"
                             data-toggle="tooltip"
-                            title="<?php pts('Marks the series at archived.'); pts('It will still be visible in the %1$s screen.', t('Archive')); ?>"
+                            title="<?php pts('Marks the series as archived.'); pts('It will still be visible in the %1$s screen.', t('Archive')); ?>"
                         >
-                            <i class="glyphicon glyphicon-bookmark"></i>
+                            <i class="glyphicon glyphicon-book"></i>
                         </a>
                         <?php
                     }
