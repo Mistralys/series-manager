@@ -140,14 +140,14 @@ class SeriesForm
         ?>
         <form method="post">
             <div class="form-group">
-                <label for="f-<?php echo self::SETTING_NAME ?>"><?php pt('Name') ?></label>
+                <label for="f-<?php echo self::SETTING_NAME ?>"><?php pt('Name') ?>*</label>
                 <input type="text" name="<?php echo self::SETTING_NAME ?>" class="form-control"
                        id="f-<?php echo self::SETTING_NAME ?>" placeholder="Game of Thrones"
                        onkeyup="UpdateSearchLinks()" value="<?php echo $this->values[self::SETTING_NAME] ?>"/>
                 <p class="help-block" id="searchlinks"></p>
             </div>
             <div class="form-group">
-                <label for="f-<?php echo self::SETTING_IMDB_ID ?>"><?php pt('%1$s ID', 'IMDB') ?></label>
+                <label for="f-<?php echo self::SETTING_IMDB_ID ?>"><?php pt('%1$s ID', 'IMDB') ?>*</label>
                 <input type="text" name="<?php echo self::SETTING_IMDB_ID ?>" class="form-control"
                        id="f-<?php echo self::SETTING_IMDB_ID ?>" placeholder="tt12345678"
                        value="<?php echo $this->values[self::SETTING_IMDB_ID] ?>"/>
