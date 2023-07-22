@@ -1,8 +1,18 @@
 # Series Manager
 
 Web-based tool for keeping track of TV series watched and stored 
-locally on disk, with [TheTVDB][] integration to fetch episode 
-information.
+locally on disk, with optional [TheTVDB][] integration to fetch 
+episode information.
+
+## Features
+
+- Keep a list of series, add links to TVDB and IMDB.
+- Keep track of seasons and episodes watched.
+- With a TVDB subscription, fetch season and episode details (optional).
+- Detect which episodes match video files locally on the disk.
+- Select favorites and archive older series.
+- Add links to other services to search by name.
+- UI in English, German and French.
 
 ## Requirements
 
