@@ -1,6 +1,7 @@
 .table.table-properties TH{
     white-space: nowrap;
     text-align: right;
+    width:1%;
 }
 
 .tab-pane{
