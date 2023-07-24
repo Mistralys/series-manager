@@ -112,8 +112,27 @@ class SeriesList
         }
 
 ?>
+<script src="js/list.js"></script>
+<form class="form-inline" onsubmit="return false;">
+    <div class="form-group">
+        <input type="search" class="form-control" id="list-filter" placeholder="<?php pt('Filter list...') ?>" onkeyup="filterList()">
+    </div>
+    <div class="checkbox" style="float: right">
+        <label title="<?php pt('Only displays favorite series.') ?>" data-toggle="tooltip">
+            <input  type="checkbox"
+                    id="list-favorites"
+                    onchange="filterList()">
+            <?php pt('Favorites only') ?>
+        </label>
+    </div>
+    <button type="button" class="btn btn-default" onclick="$('#list-filter').val('');filterList();this.blur()">
+        <i class="glyphicon glyphicon-remove"></i>
+    </button>
+</form>
+<small class="text-muted"><?php pt('Searches in the name, TVDB ID and IMDB ID.') ?></small>
+<hr>
 <form method="post" class="form-inline">
-    <table class="table table-hover">
+    <table class="table table-hover" id="series-list">
         <thead>
         <tr>
             <td><?php pt('Name') ?></td>
@@ -133,7 +152,7 @@ class SeriesList
             $rowID = JSHelper::nextElementID();
 
             ?>
-            <tr <?php if($item->isFavorite()) { echo ' class="warning"'; } ?>>
+            <tr class="list-row <?php if($item->isFavorite()) { echo ' warning favorite'; } ?>" data-search-text="<?php echo htmlspecialchars($item->getSearchText(), ENT_QUOTES) ?>">
                 <td>
                     <a href="<?php echo $item->getURLEdit() ?>"><?php echo $item->getName() ?></a>
                     <?php
