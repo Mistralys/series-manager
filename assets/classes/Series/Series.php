@@ -538,4 +538,16 @@ class Series
             'id' => $this->getIMDBID()
         ));
     }
+
+    public function getSearchText() : string
+    {
+        return implode(
+            ' ',
+            array(
+                $this->getName(false),
+                $this->getTVDBID(),
+                $this->getIMDBID()
+            )
+        );
+    }
 }
