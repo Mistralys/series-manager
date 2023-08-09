@@ -6,8 +6,10 @@
 - UI: Added possibility to favorite series.
 - UI: Added archiving of series (viewable in a separate tab).
 - UI: Added language switcher.
-- UI: Added german and french translations.
+- UI: Added German and French translations.
 - UI: Added dark mode switching.
+- UI: Added filtering for the series list.
+- UI: Add possibility to only display favorite series in the list.
 
 ## v2.1.1 - Small enhancements
 - UI: Added the "Complete" status in the overview.
