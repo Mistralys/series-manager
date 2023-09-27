@@ -11,7 +11,9 @@ use AppUtils\Request;
 use Mistralys\ChangelogParser\ChangelogParser;
 use Mistralys\SeriesManager\Series\Series;
 use Mistralys\SeriesManager\SeriesCollection;
+use Throwable;
 use function AppLocalize\t;
+use function AppUtils\parseThrowable;
 
 class Manager
 {
@@ -130,9 +132,18 @@ class Manager
             $this->page = $page;
         }
 
-        ob_start();
-        require APP_ROOT . '/pages/' . $this->page . '.php';
-        $this->content = ob_get_clean();
+        try
+        {
+            ob_start();
+            require APP_ROOT . '/pages/' . $this->page . '.php';
+            $this->content = ob_get_clean();
+        }
+        catch (Throwable $e)
+        {
+            ob_end_clean();
+            echo '<pre>'.parseThrowable($e)->toString().'</pre>';
+            exit;
+        }
 
         require APP_ROOT . '/pages/_frame.php';
     }
