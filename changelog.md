@@ -10,6 +10,7 @@
 - UI: Added dark mode switching.
 - UI: Added filtering for the series list.
 - UI: Add possibility to only display favorite series in the list.
+- UI: The selected tab is now restored in the series edit screen.
 
 ## v2.1.1 - Small enhancements
 - UI: Added the "Complete" status in the overview.
