@@ -33,6 +33,9 @@ class Series
     public const INFO_EPISODE_NAME = 'name';
     public const INFO_EPISODE_OVERVIEW = 'overview';
     const KEY_FAVORITE = 'favorite';
+    public const EDIT_TAB_SUMMARY = 'summary';
+    public const EDIT_TAB_SEASONS = 'seasons';
+    public const EDIT_TAB_SETTINGS = 'settings';
 
     protected array $data;
     
@@ -390,6 +393,13 @@ class Series
         return $this->getURL($params);
     }
 
+    public function getURLEditTab(string $tabID, array $params=array()) : string
+    {
+        $params['tab'] = $tabID;
+
+        return $this->getURLEdit($params);
+    }
+
     public function getURLDelete(array $params=array()) : string
     {
         $params[Manager::REQUEST_PARAM_PAGE] = 'delete';
@@ -449,7 +459,7 @@ class Series
     {
         $params['fetch'] = 'yes';
 
-        return $this->getURLEdit($params);
+        return $this->getURLEditTab(self::EDIT_TAB_SEASONS, $params);
     }
 
     public function getURLClearAndFetch(array $params=array()) : string
