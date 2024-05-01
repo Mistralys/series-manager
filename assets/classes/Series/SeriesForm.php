@@ -95,7 +95,7 @@ class SeriesForm
 
         $this->collection->save();
 
-        header('Location:'.$series->getURLEdit());
+        header('Location:'.$series->getURLEditTab(Series::EDIT_TAB_SETTINGS));
         exit;
     }
 
@@ -180,6 +180,7 @@ class SeriesForm
             {
                 ?>
                 <input type="hidden" name="id" value="<?php echo $this->series->getIMDBID() ?>"/>
+                <input type="hidden" name="tab" value="<?php echo Series::EDIT_TAB_SETTINGS ?>"/>
                 <button type="submit" class="btn btn-primary">
                     <i class="glyphicon glyphicon-save"></i>
                     <?php pt('Save now'); ?>
