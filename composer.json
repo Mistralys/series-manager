@@ -28,11 +28,11 @@
         }
     ],
     "require": {
-        "mistralys\/application-utils": "^2.3.2",
-        "mistralys\/application-localization": "^1.4.1",
-        "mistralys/changelog-parser": "^1.0.1",
-        "mistralys/html_quickform2": "^2.2.0",
-        "adrenth/thetvdb2": ">=6.1.0",
+        "mistralys\/application-utils": "^3.0",
+        "mistralys\/application-localization": "^1.4",
+        "mistralys/changelog-parser": "^1.0",
+        "mistralys/html_quickform2": "^2.3",
+        "adrenth/thetvdb2": ">=6.2",
         "ext-json": "*",
         "ext-simplexml": "*",
         "php": ">=7.4"
