@@ -8,6 +8,7 @@ use AppUtils\Request;
 use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\Series\Episode;
 use Mistralys\SeriesManager\Series\Season;
+use Mistralys\SeriesManager\Series\Series;
 use Mistralys\SeriesManager\Series\SeriesForm;
 use Mistralys\SeriesManager\UI;
 use function AppLocalize\pt;
@@ -15,13 +16,27 @@ use function AppLocalize\pts;
 use function AppLocalize\t;
 use function AppUtils\sb;
 
+$editTabs = array(
+    Series::EDIT_TAB_SUMMARY => t('Summary'),
+    Series::EDIT_TAB_SEASONS => t('Seasons'),
+    Series::EDIT_TAB_SETTINGS => t('Settings')
+);
+
 $request = Request::getInstance();
 $manager = Manager::getInstance();
 $selected = $manager->getSelected();
 
+$activeTab = $request
+    ->registerParam('tab')
+    ->setEnum(array_keys($editTabs))
+    ->getString(Series::EDIT_TAB_SUMMARY);
+
 if($selected === null) {
     die('No series selected.');
 }
+
+$form = (new SeriesForm($selected))
+    ->setTitleEnabled(false);
 
 if($request->getBool('fetch'))
 {
@@ -29,7 +44,7 @@ if($request->getBool('fetch'))
     $selected->fetchData($client, $request->getBool('clear'));
     $manager->getSeries()->save();
 
-    header('Location:'.$selected->getURLEdit());
+    header('Location:'.$selected->getURLEditTab(Series::EDIT_TAB_SEASONS));
 }
 
 ?>
@@ -45,18 +60,24 @@ if($request->getBool('fetch'))
     ?>
 </h3>
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-        <a href="#summary" aria-controls="summary" role="tab" data-toggle="tab"><?php pt('Summary'); ?></a>
-    </li>
-    <li role="presentation">
-        <a href="#seasons" aria-controls="seasons" role="tab" data-toggle="tab"><?php pt('Seasons') ?></a>
-    </li>
-    <li role="presentation">
-        <a href="#settings" aria-controls="settings" role="tab" data-toggle="tab"><?php pt('Settings') ?></a>
-    </li>
+    <?php
+    foreach($editTabs as $tabID => $tabLabel) {
+        ?>
+        <li role="presentation" <?php if($tabID === $activeTab) { echo 'class="active"'; } ?>>
+            <a href="#<?php echo $tabID ?>" aria-controls="<?php echo $tabID ?>" role="tab" data-toggle="tab">
+                <?php echo $tabLabel?>
+            </a>
+        </li>
+        <?php
+    }
+    ?>
 </ul>
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="summary">
+    <div
+        role="tabpanel"
+        class="tab-pane <?php if(Series::EDIT_TAB_SUMMARY === $activeTab) { echo 'active'; } ?>"
+        id="<?php echo Series::EDIT_TAB_SUMMARY ?>"
+    >
         <?php
 
         if($selected->hasInfo())
@@ -85,11 +106,19 @@ if($request->getBool('fetch'))
                         <td><?php echo $selected->getCurrentSeason() ?></td>
                     </tr>
                     <tr>
-                        <th><?php pt('Links') ?></th>
+                        <th><?php pt('%1$s ID', 'IMDB') ?></th>
                         <td>
-                            <a href="<?php echo $selected->getIMDBLink() ?>" target="_blank">IMDB</a>
-                            |
-                            <a href="<?php echo $selected->getTVDBLink() ?>" target="_blank">TheTVDB</a>
+                            <a href="<?php echo $selected->getIMDBLink() ?>" target="_blank">
+                                <?php echo $selected->getIMDBID() ?>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?php pt('%1$s ID', 'TheTVDB') ?></th>
+                        <td>
+                            <a href="<?php echo $selected->getTVDBLink() ?>" target="_blank">
+                                <?php echo $selected->getTVDBID() ?>
+                            </a>
                         </td>
                     </tr>
                 </tbody>
@@ -162,7 +191,11 @@ if($request->getBool('fetch'))
             <?php pt('Delete') ?>
         </a>
     </div>
-    <div role="tabpanel" class="tab-pane" id="seasons">
+    <div
+        role="tabpanel"
+        class="tab-pane <?php if(Series::EDIT_TAB_SEASONS === $activeTab) { echo 'active'; } ?>"
+        id="<?php echo Series::EDIT_TAB_SEASONS ?>"
+    >
         <a  href="<?php echo $selected->getURLFetch() ?>"
             class="btn btn-primary"
             title="<?php pt('Fetches data, using the cache if available.'); ?>"
@@ -232,9 +265,13 @@ if($request->getBool('fetch'))
         }
         ?>
     </div>
-    <div role="tabpanel" class="tab-pane" id="settings">
+    <div
+        role="tabpanel"
+        class="tab-pane <?php if(Series::EDIT_TAB_SETTINGS === $activeTab) { echo 'active'; } ?>"
+        id="<?php echo Series::EDIT_TAB_SETTINGS ?>"
+    >
         <?php
-        (new SeriesForm($selected))->setTitleEnabled(false)->display();
+        $form->display();
         ?>
     </div>
 </div>
