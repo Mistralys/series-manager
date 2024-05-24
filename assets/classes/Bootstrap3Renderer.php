@@ -14,6 +14,8 @@ use HTML_QuickForm2_Renderer;
 
 class Bootstrap3Renderer extends HTML_QuickForm2_Renderer
 {
+    public const RENDERER_ID = 'Bootstrap3Renderer';
+    
     /**
      * @var string[]
      */
@@ -102,13 +104,19 @@ class Bootstrap3Renderer extends HTML_QuickForm2_Renderer
 
     }
 
-    public function reset() : void
+    public function getID(): string
+    {
+        return self::RENDERER_ID;
+    }
+
+    public function reset() : self
     {
         $this->hiddens = array();
         $this->contents = array();
         $this->buttons = array();
         $this->formStart = '';
         $this->formEnd = '';
+        return $this;
     }
 
     public function startForm(HTML_QuickForm2_Node $form) : void
