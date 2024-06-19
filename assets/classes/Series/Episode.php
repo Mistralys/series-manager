@@ -119,7 +119,7 @@ class Episode
     public function findInLibrary() : ?LibraryFile
     {
         return Library::createFromConfig()->findEpisode(
-            $this->getSeries()->getName(false),
+            $this->getSeries()->getName(),
             $this->getSeasonNumber(),
             $this->getNumber()
         );
@@ -129,7 +129,7 @@ class Episode
     {
         return sprintf(
             '%s s%02de%02d',
-            $this->getSeason()->getSeries()->getName(false),
+            $this->getSeason()->getSeries()->getName(),
             $this->getSeason()->getNumber(),
             $this->getNumber()
         );

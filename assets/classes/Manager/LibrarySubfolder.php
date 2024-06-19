@@ -91,7 +91,7 @@ class LibrarySubfolder
 
         foreach($list as $series)
         {
-            if(Library::normalizeName(mb_strtolower($series->getName(false))) === $compare)
+            if(Library::normalizeName(mb_strtolower($series->getName())) === $compare)
             {
                 $this->series = $series;
             }
