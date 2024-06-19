@@ -41,7 +41,7 @@ $form = (new SeriesForm($selected))
 if($request->getBool('fetch'))
 {
     $client = $manager->createClient();
-    $selected->fetchData($client, $request->getBool('clear'));
+    $selected->fetchData($client, $request->getBool('clear'), $request->getBool('dump'));
     $manager->getSeries()->save();
 
     header('Location:'.$selected->getURLEditTab(Series::EDIT_TAB_SEASONS));
@@ -196,21 +196,21 @@ if($request->getBool('fetch'))
         class="tab-pane <?php if(Series::EDIT_TAB_SEASONS === $activeTab) { echo 'active'; } ?>"
         id="<?php echo Series::EDIT_TAB_SEASONS ?>"
     >
-        <a  href="<?php echo $selected->getURLFetch() ?>"
-            class="btn btn-primary"
-            title="<?php pt('Fetches data, using the cache if available.'); ?>"
-            data-toggle="tooltip"
-        >
-            <i class="glyphicon glyphicon-download"></i>
-            <?php pt('Fetch data') ?>
-        </a>
         <a  href="<?php echo $selected->getURLClearAndFetch() ?>"
-            class="btn btn-default"
+            class="btn btn-primary"
             title="<?php pt('Clears the cache and fetches fresh data.') ?>"
             data-toggle="tooltip"
         >
             <i class="glyphicon glyphicon-download"></i>
-            <?php echo htmlspecialchars(t('Clear and fetch')) ?>
+            <?php echo htmlspecialchars(t('Fetch data')) ?>
+        </a>
+        <a  href="<?php echo $selected->getURLClearAndFetch(array('dump' => 'yes')) ?>"
+            class="btn btn-default"
+            title="<?php pt('Fetches the data from the API and displays it.') ?>"
+            data-toggle="tooltip"
+        >
+            <i class="glyphicon glyphicon-download"></i>
+            <?php echo htmlspecialchars(t('Dump data')) ?>
         </a>
         <hr>
         <?php
