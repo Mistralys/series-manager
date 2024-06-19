@@ -433,13 +433,6 @@ class Library
             $name = str_replace($episode['matchedText'], '__EPISODE__', $name);
         }
 
-        // Remove any years from the name
-        $years = self::detectYears($name);
-        foreach($years as $year)
-        {
-            $name = str_replace((string)$year, ' ', $name);
-        }
-
         $name = self::removeExtraneousSpaces($name);
 
         // Split the name by all episode markers
@@ -448,51 +441,31 @@ class Library
         // The first part is the name
         $name = trim((string)array_shift($parts));
 
-        $words = explode(' ', $name);
-        $map = array();
-        $max = 0;
-        foreach($words as $word)
-        {
-            if(!isset($map[$word])) {
-                $map[$word] = 0;
-            }
-
-            $map[$word]++;
-
-            if($map[$word] > $max) {
-                $max = $map[$word];
-            }
+        $season = $this->detectSeasonNumber($name);
+        if($season !== null) {
+            $parts = explode($season, $name);
+            $name = array_shift($parts);
         }
 
-        if($max > 1) {
-            $keep = array();
-            foreach($map as $word => $count)
-            {
-                if($count > 1) {
-                    $keep[] = $word;
-                }
-            }
-
-            $name = implode(' ', $keep);
-        }
-
-        $parts = ConvertHelper::explodeTrim(' ', $name);
-
-        $keep = array();
-        foreach($parts as $part) {
-            if(mb_strlen($part) < 2) {
-                continue;
-            }
-
-            $keep[] = $part;
-        }
+        $name = $this->getNameAlias(implode(' ', ConvertHelper::explodeTrim(' ', $name)));
 
         return array(
-            'name' => $this->getNameAlias(implode(' ', $keep)),
-            'years' => $years,
+            'name' => $name,
+            'years' => self::detectYears($name),
             'season' => $episodeInfo['season'],
             'episode' => $episodeInfo['episode']
         );
+    }
+
+    private function detectSeasonNumber(string $subject) : ?string
+    {
+        preg_match_all('/ s([0-9]{1,2}) /', $subject, $matches);
+
+        if(!empty($matches[0][0])) {
+            return $matches[0][0];
+        }
+
+        return null;
     }
 
     /**
