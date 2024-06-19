@@ -6,9 +6,12 @@ namespace Mistralys\SeriesManager\Series;
 
 use Adrenth\Thetvdb\Client;
 use Adrenth\Thetvdb\Model\BasicEpisode;
+use AppUtils\ConvertHelper\JSONConverter;
 use AppUtils\FileHelper\JSONFile;
 use AppUtils\OutputBuffering;
-use Mistralys\SeriesManager\Manager;use function AppLocalize\pts;
+use Mistralys\SeriesManager\Manager;
+use Throwable;
+use function AppLocalize\pts;
 
 class Series
 {
@@ -49,16 +52,9 @@ class Series
         return $this->data[$name] ?? $default;
     }
     
-    public function getName(bool $appendThe=true) : string
+    public function getName() : string
     {
-        $name = (string)$this->getKey(self::KEY_NAME);
-
-        if($appendThe && strpos($name, 'The') === 0)
-        {
-            $name = substr($name, 4) . ', The';
-        }
-        
-        return $name;
+        return (string)$this->getKey(self::KEY_NAME);
     }
 
     public function isArchived() : bool
@@ -165,7 +161,7 @@ class Series
         return $this->data;
     }
     
-    public function fetchData(Client $client, bool $clearCache=false) : void
+    public function fetchData(Client $client, bool $clearCache=true, bool $dump=false) : void
     {
         $id = $this->getTVDBID();
         if(empty($id)) {
@@ -186,6 +182,29 @@ class Series
             return;
         }
 
+        if($dump) {
+            header('Content-Type: text/plain');
+
+            $json = $client->performApiCallWithJsonResponse('get', '/series/' . (int)$id);
+            print_r(JSONConverter::json2array($json));
+
+            $options = [
+                'query' => [
+                    'page' => $page ?? 1,
+                ],
+            ];
+
+            $json = $client->performApiCallWithJsonResponse(
+                'get',
+                sprintf('/series/%d/episodes', (int)$id),
+                $options
+            );
+
+            print_r(JSONConverter::json2array($json));
+
+            exit;
+        }
+
         $fetched = $client->series()->get((int)$id);
 
         $this->addMessage('Fetched info from online API.');
@@ -202,26 +221,36 @@ class Series
             self::INFO_SEASONS => array()
         );
 
-        $episodes = $client->series()->getEpisodes((int)$id)->getData();
-
-        foreach($episodes as $episode)
+        for($page=1; $page < 10; $page++)
         {
-            /* @var BasicEpisode $episode */
-            $season = $episode->getAiredSeason();
-
-            if(!isset($info[self::INFO_SEASONS][$season]))
-            {
-                $info[self::INFO_SEASONS][$season] = array(
-                    self::INFO_SEASON_ID => $episode->getAiredSeasonID(),
-                    self::INFO_SEASON_EPISODES => array()
-                );
+            // This will fail trying to get a page that does not exist.
+            try {
+                $episodes = $client->series()->getEpisodes((int)$id, $page)->getData();
+            } catch (Throwable $e) {
+                break;
             }
 
-            $info[self::INFO_SEASONS][$season][self::INFO_SEASON_EPISODES][$episode->getAiredEpisodeNumber()] = array(
-                self::INFO_EPISODE_ID => $episode->getId(),
-                self::INFO_EPISODE_NAME => $episode->getEpisodeName(),
-                self::INFO_EPISODE_OVERVIEW => $episode->getOverview()
-            );
+            if($episodes->count() === 0) {
+                break;
+            }
+
+            foreach ($episodes as $episode) {
+                /* @var BasicEpisode $episode */
+                $season = $episode->getAiredSeason();
+
+                if (!isset($info[self::INFO_SEASONS][$season])) {
+                    $info[self::INFO_SEASONS][$season] = array(
+                        self::INFO_SEASON_ID => $episode->getAiredSeasonID(),
+                        self::INFO_SEASON_EPISODES => array()
+                    );
+                }
+
+                $info[self::INFO_SEASONS][$season][self::INFO_SEASON_EPISODES][$episode->getAiredEpisodeNumber()] = array(
+                    self::INFO_EPISODE_ID => $episode->getId(),
+                    self::INFO_EPISODE_NAME => $episode->getEpisodeName(),
+                    self::INFO_EPISODE_OVERVIEW => $episode->getOverview()
+                );
+            }
         }
 
         $cacheFile->putData($info, true);
@@ -291,7 +320,7 @@ class Series
             );
         }
 
-        return array_merge($links, Manager::getInstance()->prepareCustomLinks($this->getName(false)));
+        return array_merge($links, Manager::getInstance()->prepareCustomLinks($this->getName()));
     }
     
     public function setName(string $name) : bool
@@ -554,7 +583,7 @@ class Series
         return implode(
             ' ',
             array(
-                $this->getName(false),
+                $this->getName(),
                 $this->getTVDBID(),
                 $this->getIMDBID()
             )
