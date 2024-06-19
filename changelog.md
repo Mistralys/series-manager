@@ -1,3 +1,8 @@
+## v3.0.1 - Fixed issues
+- Name Detection: Improved the name parsing to handle some more edge cases.
+- Fetch Data: Fixed missing episodes by only loading page 1 of paginated results.
+- UI: Removed confusing ", The" in series that start with "The".
+
 ## v3.0.0 - Public availability release
 - Core: Prepared to make the project public.
 - Core: Added license file.
