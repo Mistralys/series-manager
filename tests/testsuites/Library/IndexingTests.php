@@ -50,7 +50,7 @@ final class IndexingTests extends SeriesManagerSuite
             array(
                 'label' => 'With year in parentheses before the episode number',
                 'file' => 'Marvel\'s Agents of S.H.I.E.L.D. (2013) - S01E01 - Pilot',
-                'expected' => 'marvels agents of shield',
+                'expected' => 'marvels agents of shield 2013',
                 'season' => 1,
                 'episode' => 1
             ),
@@ -58,6 +58,13 @@ final class IndexingTests extends SeriesManagerSuite
                 'label' => 'Doubled name',
                 'file' => 'Game.of.Thrones.S01.1080p.WEB.DD5.1.H.264 - Game.of.Thrones.S01E01.Winter.Is.Coming.1080p.WEB.DD5.1.H.264',
                 'expected' => 'game of thrones',
+                'season' => 1,
+                'episode' => 1
+            ),
+            array(
+                'label' => 'Failing example 1',
+                'file' => 'The.Barbarian.and.the.Troll.S01E01.Brendar.the.Barbarian.1080p.AMZN.WEBRip.DDP2.0.x264-TVSmash[rarbg].mkv',
+                'expected' => 'the barbarian and the troll',
                 'season' => 1,
                 'episode' => 1
             )
