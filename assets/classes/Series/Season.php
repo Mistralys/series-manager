@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mistralys\SeriesManager\Series;
 
 use AppUtils\ArrayDataCollection;
+use Mistralys\SeriesManager\Manager;
 
 class Season
 {
@@ -32,6 +33,23 @@ class Season
     public function getNumber() : int
     {
         return $this->number;
+    }
+
+    /**
+     * @return array<int,array{label:string,url:string}>
+     */
+    public function getSearchLinks() : array
+    {
+        return Manager::getInstance()->prepareCustomLinks($this->getSearchString());
+    }
+
+    public function getSearchString() : string
+    {
+        return sprintf(
+            '%s s%02d',
+            $this->getSeries()->getName(),
+            $this->getNumber()
+        );
     }
 
     public function getID() : int
