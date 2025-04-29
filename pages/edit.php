@@ -35,6 +35,8 @@ if($selected === null) {
     die('No series selected.');
 }
 
+Manager::setDocumentTitle($selected->getName());
+
 $form = (new SeriesForm($selected))
     ->setTitleEnabled(false);
 
@@ -224,6 +226,23 @@ if($request->getBool('fetch'))
         {
             ?>
             <h4><?php pt('Season') ?> <?php echo $season->getNumber()  ?></h4>
+            <p>
+                <?php
+
+                pts('Entire season:');
+
+                $links = array();
+                foreach($season->getSearchLinks() as $def) {
+                    $links[] = (string)sb()->link(
+                        $def['label'],
+                        $def['url'],
+                        true
+                    );
+                }
+
+                echo implode(' | ', $links);
+                ?>
+            </p>
             <table class="table">
                 <tbody>
                 <?php

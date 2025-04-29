@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Mistralys\SeriesManager\Pages;
 
+use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\Manager\Library;
 use function AppLocalize\pt;
 use function AppLocalize\t;
 
 $library = Library::createFromConfig();
+
+Manager::setDocumentTitle(t('Series library'));
 
 $tabs = array(
     Library::TAB_INDEX_STATUS => t('Index status'),

@@ -93,6 +93,8 @@ class SeriesList
 
     public function render() : string
     {
+        Manager::setDocumentTitle(t('Series overview'));
+
         $this->handleActions();
 
         OutputBuffering::start();
