@@ -68,6 +68,18 @@ class Manager
         return !empty($_SESSION[self::SESSION_DARK_MODE]) && $_SESSION[self::SESSION_DARK_MODE] === true;
     }
 
+    private static ?string $documentTitle = null;
+
+    public static function getDocumentTitle() : string
+    {
+        return self::$documentTitle ?? self::getName();
+    }
+
+    public static function setDocumentTitle(?string $title) : void
+    {
+        self::$documentTitle = $title;
+    }
+
     public static function getName() : string
     {
         return t('Series Manager');
