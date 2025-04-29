@@ -161,7 +161,10 @@ class Library
         {
             foreach ($data[self::KEY_FOLDERS] as $def)
             {
-                $this->registerFolder(LibrarySubfolder::createFromArray($def));
+                $folder = LibrarySubfolder::createFromArray($def);
+                if($folder !== null) {
+                    $this->registerFolder($folder);
+                }
             }
         }
 
