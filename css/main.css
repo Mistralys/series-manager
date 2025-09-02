@@ -19,3 +19,9 @@ BODY.dark-mode TR.warning:hover>TD{
 BODY.dark-mode .form-control{
     background-color:#303030;
 }
+
+@media (min-width: 1600px) {
+    .container {
+        width: 90%;
+    }
+}
