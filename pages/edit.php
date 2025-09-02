@@ -7,9 +7,7 @@ namespace Mistralys\SeriesManager\Pages;
 use AppUtils\Request;
 use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\Series\Series;
-use Mistralys\SeriesManager\UI;
 use function AppLocalize\pt;
-use function AppLocalize\pts;
 use function AppLocalize\t;
 
 $request = Request::getInstance();
