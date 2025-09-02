@@ -9,7 +9,9 @@ use Adrenth\Thetvdb\Model\BasicEpisode;
 use AppUtils\ConvertHelper\JSONConverter;
 use AppUtils\FileHelper\JSONFile;
 use AppUtils\OutputBuffering;
+use AppUtils\Request;
 use Mistralys\SeriesManager\Manager;
+use Mistralys\SeriesManager\ManagerException;
 use Throwable;
 use function AppLocalize\pts;
 
@@ -245,17 +247,34 @@ class Series
                     );
                 }
 
-                $info[self::INFO_SEASONS][$season][self::INFO_SEASON_EPISODES][$episode->getAiredEpisodeNumber()] = array(
-                    self::INFO_EPISODE_ID => $episode->getId(),
-                    self::INFO_EPISODE_NAME => $episode->getEpisodeName(),
-                    self::INFO_EPISODE_OVERVIEW => $episode->getOverview()
-                );
+                $info[self::INFO_SEASONS][$season][self::INFO_SEASON_EPISODES][$episode->getAiredEpisodeNumber()] = $this->episode2array($episode);
             }
         }
 
         $cacheFile->putData($info, true);
 
         $this->setKey(self::KEY_INFO, $info);
+    }
+
+    private function episode2array(BasicEpisode $episode) : array
+    {
+        return array(
+            self::INFO_EPISODE_ID => $episode->getId(),
+            self::INFO_EPISODE_NAME => $this->filterName($episode->getEpisodeName()),
+            self::INFO_EPISODE_OVERVIEW => $episode->getOverview()
+        );
+    }
+
+    private function filterName(string $name) : string
+    {
+        $name = trim($name);
+        $test = strtolower($name);
+
+        if(in_array($test, array('tba', 'tbd', 'na', 'n/a'), true)) {
+            return '';
+        }
+
+        return $name;
     }
 
     private function resetInternalCache() : void
@@ -429,6 +448,11 @@ class Series
         return $this->getURLEdit($params);
     }
 
+    public function getURLSeasons(array $params=array()) : string
+    {
+        return $this->getURLEditTab(self::EDIT_TAB_SEASONS, $params);
+    }
+
     public function getURLDelete(array $params=array()) : string
     {
         $params[Manager::REQUEST_PARAM_PAGE] = 'delete';
@@ -588,5 +612,61 @@ class Series
                 $this->getIMDBID()
             )
         );
+    }
+
+    public function getSeasonByRequest() : ?Season
+    {
+        $id = Request::getInstance()->registerParam('season')->setInteger()->getInt();
+        if($id > 0 && $this->seasonExists($id)) {
+            return $this->getSeasonByID($id);
+        }
+
+        return null;
+    }
+
+    public function seasonExists(int $id) : bool
+    {
+        foreach($this->getSeasons() as $season) {
+            if($season->getID() === $id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getSeasonByID(int $id) : Season
+    {
+        foreach($this->getSeasons() as $season) {
+            if($season->getID() === $id) {
+                return $season;
+            }
+        }
+
+        throw new ManagerException(
+            'Unknown season',
+            sprintf(
+                'The season [%s] is unknown.',
+                $id
+            ),
+            ManagerException::ERROR_UNKNOWN_SEASON
+        );
+    }
+
+    public function deleteSeason(Season $season) : self
+    {
+        $this->seasons = null;
+
+        $seasonID = $season->getID();
+
+        foreach($this->data[self::KEY_INFO][self::INFO_SEASONS] as $idx => $season) {
+            if($season[self::INFO_SEASON_ID] === $seasonID) {
+                unset($this->data[self::KEY_INFO][self::INFO_SEASONS][$idx]);
+                $this->save();
+                break;
+            }
+        }
+
+        return $this;
     }
 }
