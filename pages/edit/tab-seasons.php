@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mistralys\SeriesManager\Pages\Edit;
 
+use AppUtils\Request;
 use Mistralys\SeriesManager\Series\Episode;
 use Mistralys\SeriesManager\Series\Season;
 use Mistralys\SeriesManager\Series\Series;
@@ -16,6 +17,14 @@ use function Mistralys\SeriesManager\Pages\getEditSeries;
 
 $selected = getEditSeries();
 $activeTab = getActiveEditTab();
+
+if(Request::getInstance()->getParam('action') === 'delete-season') {
+    $season = $selected->getSeasonByRequest();
+    if($season) {
+        $season->delete();
+        header('Location:'.$selected->getURLSeasons());
+    }
+}
 
 ?>
 <div
@@ -79,6 +88,8 @@ $activeTab = getActiveEditTab();
                 return $b->getNumber() - $a->getNumber();
             });
 
+            $nonEmpty = 0;
+
             foreach($episodes as $episode)
             {
                 $links = array();
@@ -91,6 +102,10 @@ $activeTab = getActiveEditTab();
                     );
                 }
 
+                if(!empty($episode->getName()) || !empty($episode->getSynopsis())) {
+                    $nonEmpty++;
+                }
+
                 ?>
                 <tr>
                     <td style="text-align: center">
@@ -99,7 +114,7 @@ $activeTab = getActiveEditTab();
                         ?>
                     </td>
                     <td style="text-align: right"><?php echo sprintf('%02d', $episode->getNumber()) ?></td>
-                    <td><?php echo $episode->getSynopsis() ?></td>
+                    <td><?php echo $episode->getName().' '.$episode->getSynopsis() ?></td>
                     <td style="white-space: nowrap"><?php echo implode(' | ', $links) ?></td>
                 </tr>
                 <?php
@@ -108,6 +123,21 @@ $activeTab = getActiveEditTab();
             </tbody>
         </table>
         <?php
+        if($nonEmpty === 0)
+        {
+            ?>
+            <div class="alert alert-warning">
+                <?php
+                    pts('This season\'s data seems to be incomplete.');
+                    pts('Do you want to delete it?');
+                ?>
+                <a href="<?php echo $season->getURLDelete() ?>" class="btn btn-sm btn-danger">
+                    <i class="glyphicon glyphicon-remove-circle"></i>
+                    <?php pt('Delete now'); ?>
+                </a>
+            </div>
+            <?php
+        }
     }
     ?>
 </div>
