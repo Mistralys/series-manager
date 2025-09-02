@@ -96,4 +96,17 @@ class Season
 
         return true;
     }
+
+    public function getURLDelete() : string
+    {
+        return $this->series->getURLSeasons(array(
+            'season' => $this->getID(),
+            'action' => 'delete-season'
+        ));
+    }
+
+    public function delete() : void
+    {
+        $this->series->deleteSeason($this);
+    }
 }
