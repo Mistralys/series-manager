@@ -75,7 +75,7 @@ $manager = Manager::getInstance();
         </div>
       </div>
     </nav>
-    <div class="container">
+    <div class="container" id="main-container">
         <?php echo $manager->getContent(); ?>
         <br>
         <br>
