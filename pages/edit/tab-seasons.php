@@ -78,6 +78,10 @@ if(Request::getInstance()->getParam('action') === 'delete-season') {
 
             echo implode(' | ', $links);
             ?>
+            |
+            <a href="<?php echo $season->getURLDelete() ?>" title="<?php pt('Delete this season') ?>">
+                <i class="glyphicon glyphicon-remove-circle text-danger"></i>
+            </a>
         </p>
         <table class="table">
             <tbody>
