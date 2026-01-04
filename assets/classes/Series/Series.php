@@ -265,8 +265,12 @@ class Series
         );
     }
 
-    private function filterName(string $name) : string
+    private function filterName(?string $name) : string
     {
+        if(empty($name)) {
+            return '';
+        }
+
         $name = trim($name);
         $test = strtolower($name);
 
