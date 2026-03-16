@@ -1,0 +1,40 @@
+moduleMetaData:
+  id: "library"
+  label: "Library"
+  description: "Scans local disk paths for video files, indexes them, and matches episodes to series in the collection."
+  keywords:
+    - Library Indexer
+    - File Scanning
+    - Episode Detection
+    - Name Aliases
+  relatedModules:
+    - core
+    - series
+
+documents:
+  - description: 'Library - Overview'
+    outputPath: 'modules/library/overview.md'
+    sources:
+      - type: file
+        description: 'Module overview'
+        sourcePaths:
+          - ./
+        filePattern: "README.md"
+
+  - description: 'Library - Architecture'
+    outputPath: 'modules/library/architecture-core.md'
+    sources:
+      - type: file
+        description: 'Public class signatures'
+        sourcePaths:
+          - ./
+        filePattern: "*.php"
+        modifiers:
+          - name: php-content-filter
+            options:
+              method_visibility: [ "public" ]
+              exclude_methods: [ "__construct" ]
+              property_visibility: [ "public" ]
+              constant_visibility: [ "public" ]
+              keep_method_bodies: false
+              keep_doc_comments: true

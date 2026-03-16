@@ -1,0 +1,40 @@
+moduleMetaData:
+  id: "series"
+  label: "Series"
+  description: "TV series entity model — Series, Season, and Episode domain objects plus form and list rendering."
+  keywords:
+    - Series
+    - Season
+    - Episode
+    - TheTVDB
+  relatedModules:
+    - core
+    - library
+
+documents:
+  - description: 'Series - Overview'
+    outputPath: 'modules/series/overview.md'
+    sources:
+      - type: file
+        description: 'Module overview'
+        sourcePaths:
+          - ./
+        filePattern: "README.md"
+
+  - description: 'Series - Architecture'
+    outputPath: 'modules/series/architecture-core.md'
+    sources:
+      - type: file
+        description: 'Public class signatures'
+        sourcePaths:
+          - ./
+        filePattern: "*.php"
+        modifiers:
+          - name: php-content-filter
+            options:
+              method_visibility: [ "public" ]
+              exclude_methods: [ "__construct" ]
+              property_visibility: [ "public" ]
+              constant_visibility: [ "public" ]
+              keep_method_bodies: false
+              keep_doc_comments: true

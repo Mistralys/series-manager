@@ -1,0 +1,44 @@
+moduleMetaData:
+  id: "core"
+  label: "Core"
+  description: "Application singleton, series collection, UI utilities, form handling, and the HTML frame."
+  keywords:
+    - Manager
+    - SeriesCollection
+    - Routing
+    - Authentication
+    - Session
+  relatedModules:
+    - series
+    - library
+
+documents:
+  - description: 'Core - Overview'
+    outputPath: 'modules/core/overview.md'
+    sources:
+      - type: file
+        description: 'Module overview'
+        sourcePaths:
+          - ./
+        filePattern: "README.md"
+
+  - description: 'Core - Architecture'
+    outputPath: 'modules/core/architecture-core.md'
+    sources:
+      - type: file
+        description: 'Public class signatures'
+        sourcePaths:
+          - ./
+        filePattern: "*.php"
+        excludePatterns:
+          - 'Manager/'
+          - 'Series/'
+        modifiers:
+          - name: php-content-filter
+            options:
+              method_visibility: [ "public" ]
+              exclude_methods: [ "__construct" ]
+              property_visibility: [ "public" ]
+              constant_visibility: [ "public" ]
+              keep_method_bodies: false
+              keep_doc_comments: true

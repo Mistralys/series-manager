@@ -1,0 +1,77 @@
+$schema: 'https://raw.githubusercontent.com/context-hub/generator/refs/heads/main/json-schema.json'
+
+mcp:
+  name: "Series Manager CTX"
+  version: "1.0.0"
+
+project:
+  path: "."
+  alias: "series-manager"
+
+import:
+  - path: "./assets/classes/module-context.yaml"
+  - path: "./assets/classes/**/module-context.yaml"
+
+documents:
+  - description: 'Project - Folder Structure'
+    outputPath: 'project-folder-structure.md'
+    sources:
+      - type: tree
+        description: 'Source classes'
+        sourcePaths:
+          - assets/classes
+        filePattern: '*.php'
+        renderFormat: ascii
+        maxDepth: 3
+      - type: tree
+        description: 'Pages'
+        sourcePaths:
+          - pages
+        filePattern: '*.php'
+        renderFormat: ascii
+        maxDepth: 2
+      - type: tree
+        description: 'Frontend assets'
+        sourcePaths:
+          - css
+          - js
+        filePattern: '*'
+        renderFormat: ascii
+        maxDepth: 1
+      - type: tree
+        description: 'Tests'
+        sourcePaths:
+          - tests
+        filePattern: '*'
+        renderFormat: ascii
+        maxDepth: 3
+      - type: tree
+        description: 'Localization'
+        sourcePaths:
+          - localization
+        filePattern: '*'
+        renderFormat: ascii
+        maxDepth: 1
+      - type: tree
+        description: 'Documentation'
+        sourcePaths:
+          - docs
+        filePattern: '*'
+        renderFormat: ascii
+        maxDepth: 3
+
+  - description: 'Project - Overview'
+    outputPath: 'project-overview.md'
+    sources:
+      - type: file
+        description: 'Project README'
+        sourcePaths:
+          - .
+        filePattern: "README.md"
+        excludePatterns:
+          - 'vendor/'
+          - 'assets/'
+          - 'docs/'
+          - 'tests/'
+          - 'cache/'
+          - 'data/'
