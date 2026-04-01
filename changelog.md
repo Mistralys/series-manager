@@ -1,5 +1,11 @@
 # Series Manager Changelog
 
+## v3.2.0 - TheTVDB API v4 Migration
+- API: Migrated to official TheTVDB API v4 client.
+- API: Implemented auto-paginated episode retrieval.
+- API: Removed site rating count as it is no longer provided.
+- Core: Fixed timeout with default PHP ini settings.
+
 ## v3.1.0 - Season Management
 - Seasons: Added the ability to delete entire seasons from the edit screen.
 - UI: Added TheTVDB attribution logo.

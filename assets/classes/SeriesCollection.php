@@ -106,6 +106,8 @@ class SeriesCollection
 
     public function fetchData(bool $clearCache = false) : array
     {
+        set_time_limit(0);
+
         $messages = array();
 
         $client = Manager::getInstance()->createClient();

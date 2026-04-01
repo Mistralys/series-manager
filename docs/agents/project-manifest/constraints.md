@@ -86,8 +86,7 @@
 ## TheTVDB Integration
 
 - A TheTVDB subscription (API key + subscriber PIN) is required for data fetching. Without it, fetching is silently skipped.
-- The API client (`adrenth/thetvdb2`) is created lazily in `Manager::createClient()` and cached for the request lifetime.
-- The TheTVDB package is pulled from a custom VCS fork (`https://github.com/Mistralys/thetvdb2.git`); the VCS repository is declared in `composer.json`.
+- The API client (`canihavesomecoffee/thetvdbapi`) is created lazily in `Manager::createClient()` and cached for the request lifetime.
 - Fetched data is cached per series in `cache/{imdbID}-info.json`. The cache is only refreshed when the user explicitly requests it (clear cache option on the fetch page, or per-series on the edit page).
 - Episode names that are `tba`, `tbd`, `na`, or `n/a` (case-insensitive) are normalized to an empty string by `Series::filterName()`.
 

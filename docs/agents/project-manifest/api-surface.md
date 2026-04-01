@@ -43,7 +43,7 @@ public function getSelected() : ?Series
 public function isLoggedIn() : bool
 public function isPasswordValid(string $password) : bool
 public function encodePassword(string $password) : string   // SHA-1 hash with salt
-public function createClient() : \Adrenth\Thetvdb\Client    // creates/caches TheTVDB API client
+public function createClient() : \CanIHaveSomeCoffee\TheTVDbAPI\TheTVDbAPI    // creates/caches TheTVDB API client
 public function getCustomLinkDefs() : array                 // returns array<int,array{label:string,template:string}>
 public function prepareCustomLinks(string $searchTerm) : array  // returns array<int,array{label:string,url:string}>
 public function prepareLinks(array $linkDefs, string $searchTerm) : array
@@ -164,7 +164,7 @@ public function setArchived(bool $archived) : self
 public function setFavorite(bool $favorite) : self
 public function save() : self                           // delegates to SeriesCollection::save()
 public function deleteSeason(Season $season) : self
-public function fetchData(\Adrenth\Thetvdb\Client $client, bool $clearCache = true, bool $dump = false) : void
+public function fetchData(\CanIHaveSomeCoffee\TheTVDbAPI\TheTVDbAPI $client, bool $clearCache = true, bool $dump = false) : void
 public function redirectToReturnPage() : never
 ```
 

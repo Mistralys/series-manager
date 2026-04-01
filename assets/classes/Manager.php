@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mistralys\SeriesManager;
 
-use Adrenth\Thetvdb\Client;
+use CanIHaveSomeCoffee\TheTVDbAPI\TheTVDbAPI;
 use AppLocalize\Localization;
 use AppUtils\FileHelper\JSONFile;
 use AppUtils\Request;
@@ -232,24 +232,17 @@ class Manager
         return sha1($password . '-' . APP_SALT);
     }
 
-    private ?Client $client = null;
+    private ?TheTVDbAPI $client = null;
 
-    public function createClient() : Client
+    public function createClient() : TheTVDbAPI
     {
         if (isset($this->client))
         {
             return $this->client;
         }
 
-        $client = new Client();
-        $client->setLanguage('en');
-
-        $token = $client->authentication()->login(
-            APP_API_KEY,
-            null,
-            APP_SUBSCRIBER_PIN
-        );
-
+        $client = new TheTVDbAPI('eng');
+        $token = $client->authentication()->login(APP_API_KEY, APP_SUBSCRIBER_PIN);
         $client->setToken($token);
 
         $this->client = $client;

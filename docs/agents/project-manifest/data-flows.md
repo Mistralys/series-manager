@@ -64,8 +64,9 @@ User clicks "Fetch data" in edit view (GET ?page=edit&id={imdbID}&fetch=yes)
        ├─ Series::fetchData($client, $clearCache)
        │    ├─ checks cache/  {imdbID}-info.json
        │    │    └─ if exists and clearCache=false → loads from JSON, returns
-       │    ├─ $client->series()->get(tvdbID)   (fetches series metadata)
-       │    ├─ loops pages of $client->series()->getEpisodes(tvdbID, $page)
+       │    ├─ $client->series()->extended(tvdbID)   (fetches series metadata + genres + network + seasons in one call)
+       │    ├─ builds season number → season ID lookup from SeriesExtendedRecord::$seasons
+       │    ├─ $client->series()->allEpisodes(tvdbID)  (auto-paginated episode list)
        │    │    └─ builds $info array: status, genre, network, overview, seasons, episodes
        │    ├─ writes cache/{imdbID}-info.json
        │    └─ stores result in Series::$data[KEY_INFO]

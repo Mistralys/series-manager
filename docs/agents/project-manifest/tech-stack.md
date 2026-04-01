@@ -18,9 +18,8 @@
 | `mistralys/application-localization` | `^1.4` | Multi-locale support (`Localization`, `t()`, `pt()`, `pts()`, `ptex()`) |
 | `mistralys/changelog-parser` | `^1.0` | Reads `changelog.md` to auto-update `version.txt` at boot |
 | `mistralys/html_quickform2` | `^2.3` | HTML form building (login form) |
-| `adrenth/thetvdb2` | `>=6.2` | TheTVDB v4 API client (custom VCS fork) |
+| `canihavesomecoffee/thetvdbapi` | `^2.1` | TheTVDB v4 API client |
 | `ext-json` | `*` | JSON encode/decode (library cache, data files) |
-| `ext-simplexml` | `*` | XML parsing (used by thetvdb2 library) |
 
 ## Development Dependencies
 

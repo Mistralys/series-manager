@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Mistralys\SeriesManager\Series;
 
-use Adrenth\Thetvdb\Client;
-use Adrenth\Thetvdb\Model\BasicEpisode;
-use AppUtils\ConvertHelper\JSONConverter;
+use CanIHaveSomeCoffee\TheTVDbAPI\TheTVDbAPI;
+use CanIHaveSomeCoffee\TheTVDbAPI\Model\EpisodeBaseRecord;
 use AppUtils\FileHelper\JSONFile;
 use AppUtils\OutputBuffering;
 use AppUtils\Request;
 use Mistralys\SeriesManager\Manager;
 use Mistralys\SeriesManager\ManagerException;
-use Throwable;
 use function AppLocalize\pts;
 
 class Series
@@ -163,8 +161,10 @@ class Series
         return $this->data;
     }
     
-    public function fetchData(Client $client, bool $clearCache=true, bool $dump=false) : void
+    public function fetchData(TheTVDbAPI $client, bool $clearCache=true, bool $dump=false) : void
     {
+        set_time_limit(0);
+
         $id = $this->getTVDBID();
         if(empty($id)) {
             $this->addMessage('Cannot fetch data, no TVDB ID set.');
@@ -187,68 +187,49 @@ class Series
         if($dump) {
             header('Content-Type: text/plain');
 
-            $json = $client->performApiCallWithJsonResponse('get', '/series/' . (int)$id);
-            print_r(JSONConverter::json2array($json));
+            $json = $client->performAPICallWithJsonResponse('get', 'series/' . (int)$id . '/extended');
+            print_r($json);
 
-            $options = [
-                'query' => [
-                    'page' => $page ?? 1,
-                ],
-            ];
-
-            $json = $client->performApiCallWithJsonResponse(
-                'get',
-                sprintf('/series/%d/episodes', (int)$id),
-                $options
-            );
-
-            print_r(JSONConverter::json2array($json));
+            $json = $client->performAPICallWithJsonResponse('get', 'series/' . (int)$id . '/episodes/default/eng');
+            print_r($json);
 
             exit;
         }
 
-        $fetched = $client->series()->get((int)$id);
+        $extended = $client->series()->extended((int)$id);
 
         $this->addMessage('Fetched info from online API.');
 
         $info = array(
-            self::INFO_STATUS => $fetched->getStatus(),
-            self::INFO_GENRE => $fetched->getGenre(),
-            self::INFO_NETWORK => $fetched->getNetwork(),
-            self::INFO_OVERVIEW => $fetched->getOverview(),
-            self::INFO_SEASON => $fetched->getSeason(),
-            self::INFO_FIRST_AIRED => $fetched->getFirstAired(),
-            self::INFO_SITE_RATING => $fetched->getSiteRating(),
-            self::INFO_SITE_RATING_COUNT => $fetched->getSiteRatingCount(),
+            self::INFO_STATUS => $extended->status->name ?? '',
+            self::INFO_GENRE => array_map(static fn($g) => $g->name, $extended->genres),
+            self::INFO_NETWORK => isset($extended->originalNetwork->name) ? $extended->originalNetwork->name : (isset($extended->latestNetwork->name) ? $extended->latestNetwork->name : ''),
+            self::INFO_OVERVIEW => $extended->overview ?? '',
+            self::INFO_SEASON => count($extended->seasons),
+            self::INFO_FIRST_AIRED => $extended->firstAired ?? '',
+            self::INFO_SITE_RATING => $extended->score,
+            self::INFO_SITE_RATING_COUNT => 0,
             self::INFO_SEASONS => array()
         );
 
-        for($page=1; $page < 10; $page++)
-        {
-            // This will fail trying to get a page that does not exist.
-            try {
-                $episodes = $client->series()->getEpisodes((int)$id, $page)->getData();
-            } catch (Throwable $e) {
-                break;
+        // Build season number → season ID lookup from extended record
+        $seasonIdMap = [];
+        foreach ($extended->seasons as $seasonRecord) {
+            $seasonIdMap[$seasonRecord->number] = $seasonRecord->id;
+        }
+
+        $episodes = $client->series()->allEpisodes((int)$id);
+        foreach ($episodes as $episode) {
+            $season = $episode->seasonNumber;
+
+            if (!isset($info[self::INFO_SEASONS][$season])) {
+                $info[self::INFO_SEASONS][$season] = array(
+                    self::INFO_SEASON_ID => $seasonIdMap[$season] ?? 0,
+                    self::INFO_SEASON_EPISODES => array()
+                );
             }
 
-            if($episodes->count() === 0) {
-                break;
-            }
-
-            foreach ($episodes as $episode) {
-                /* @var BasicEpisode $episode */
-                $season = $episode->getAiredSeason();
-
-                if (!isset($info[self::INFO_SEASONS][$season])) {
-                    $info[self::INFO_SEASONS][$season] = array(
-                        self::INFO_SEASON_ID => $episode->getAiredSeasonID(),
-                        self::INFO_SEASON_EPISODES => array()
-                    );
-                }
-
-                $info[self::INFO_SEASONS][$season][self::INFO_SEASON_EPISODES][$episode->getAiredEpisodeNumber()] = $this->episode2array($episode);
-            }
+            $info[self::INFO_SEASONS][$season][self::INFO_SEASON_EPISODES][$episode->number] = $this->episode2array($episode);
         }
 
         $cacheFile->putData($info, true);
@@ -256,12 +237,12 @@ class Series
         $this->setKey(self::KEY_INFO, $info);
     }
 
-    private function episode2array(BasicEpisode $episode) : array
+    private function episode2array(EpisodeBaseRecord $episode) : array
     {
         return array(
-            self::INFO_EPISODE_ID => $episode->getId(),
-            self::INFO_EPISODE_NAME => $this->filterName($episode->getEpisodeName()),
-            self::INFO_EPISODE_OVERVIEW => $episode->getOverview()
+            self::INFO_EPISODE_ID => $episode->id,
+            self::INFO_EPISODE_NAME => $this->filterName($episode->name),
+            self::INFO_EPISODE_OVERVIEW => $episode->overview ?? ''
         );
     }
 
