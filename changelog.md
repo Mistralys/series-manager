@@ -10,8 +10,6 @@
 - Core: Fixed errors caused by empty names and missing values.
 - Docs: Added agentic coding support and updated documentation.
 - Composer: Updated external dependencies.
-
-## v3.0.1 - Fixed issues
 - Name Detection: Improved the name parsing to handle some more edge cases.
 - Fetch Data: Fixed missing episodes by only loading page 1 of paginated results.
 - UI: Removed confusing ", The" in series that start with "The".
