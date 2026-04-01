@@ -16,7 +16,7 @@ episode information.
 
 ## Requirements
 
-- Local webserver with PHP 7.4+
+- Local webserver with PHP 8.4+
 - [Composer][]
 - [TheTVDB][] API account
 
