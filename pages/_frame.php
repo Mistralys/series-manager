@@ -110,6 +110,12 @@ $manager = Manager::getInstance();
             |
             <a href="?toggleDarkMode=yes"><?php pt('Toggle dark mode') ?></a>
         </p>
+        <p>
+            <?php pt('TV Series data provided by TheTVDB') ?><br>
+            <a href="https://thetvdb.com" target="_blank">
+                <img src="img/tvdb-logo-on-<?php echo Manager::isDarkMode() ? 'dark' : 'light'; ?>.png" alt="TheTVDB" style="height:60px">
+            </a>
+        </p>
         <br>
         <br> 
     </div>
