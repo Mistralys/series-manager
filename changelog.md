@@ -1,3 +1,16 @@
+# Series Manager Changelog
+
+## v3.1.0 - Season Management
+- Seasons: Added the ability to delete entire seasons from the edit screen.
+- UI: Added TheTVDB attribution logo.
+- UI: Adjusted media queries for better display on large screens.
+- Library: Improved local folder loading logic.
+- Core: Added custom HTML document title handling.
+- Core: Split edit tabs into dedicated script files for better maintainability.
+- Core: Fixed errors caused by empty names and missing values.
+- Docs: Added agentic coding support and updated documentation.
+- Composer: Updated external dependencies.
+
 ## v3.0.1 - Fixed issues
 - Name Detection: Improved the name parsing to handle some more edge cases.
 - Fetch Data: Fixed missing episodes by only loading page 1 of paginated results.
